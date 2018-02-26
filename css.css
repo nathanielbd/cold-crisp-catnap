@@ -1,0 +1,53 @@
+body{
+    font-family: "Courier";
+    color: white;
+    font-size: 15px;
+    font-weight: normal;
+    background-color: black;
+  }
+  body, html{
+    height: 100%;
+    width: 100%;
+  }
+  div{
+    height: 80%;
+  }
+  u{
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    right: 50px;
+  }
+  .main{
+    display: inline-block;
+    width: 65%;
+    padding: 10px;
+  }
+  .side{
+    display: inline-block;
+    width: 30%;
+    height: 95%;
+    padding: 10px;
+    position: absolute;
+  }
+  input{
+    padding: 10px 10px 10px 30px;
+    caret-color: white;
+    margin: 10px 5px;
+    box-size: border-box;
+    border: none;
+    background-color: black;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    background-image: url(terminal3.png);
+    background-repeat: no-repeat;
+    font-size: 15px;
+    width: 90%;
+    font-family: "Courier";
+  }
+  input:focus{
+    outline: none;
+    font-size: 20px;
+    font-family: "Courier";
+  }
