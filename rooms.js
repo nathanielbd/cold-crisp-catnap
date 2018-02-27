@@ -5,7 +5,7 @@ function Item(name, desc, init){
     this.name = name;
     this.desc = desc;
     this.init = init;
-    // this.commands = undefined; // this will be a map if there are special specific commands
+    // this.commands = new Map(); // this will be a map if there are special specific commands
     this.lookAt = function() {
       display(this.desc);
     };
@@ -145,16 +145,17 @@ flask.use = function() {
 var key = new Item("key", "The captain's access card.", "There's a key in the far corner.");
 // make unlock and lock functions specific to key
 
-key.use = function(room) {
-  if (room.locked) {
-    room.locked = false;
-    display("Unlocked the door.");
-  }
-  else {
-    room.locked = true;
-    display("Locked the door.");
-  }
-};
+// this doesn't work yet
+// key.use = function(room) {
+//   if (room.locked) {
+//     room.locked = false;
+//     display("Unlocked the door.");
+//   }
+//   else {
+//     room.locked = true;
+//     display("Locked the door.");
+//   }
+// };
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);

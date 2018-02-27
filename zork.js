@@ -3,44 +3,45 @@
 // isInInv() loop through inventory ==> has item
 // take()
 
-// get git to work before messing around with the abstraction
-
 var inventory = [];
-function item(itemName) { // item name is in room or inv?
-
+function itemInInv(itemName) {
+    for (var i=0; i<inventory.length; i++) {
+        if (inventory[i].name.toUpperCase() == itemName.toUpperCase()) {
+            return inventory[i];
+        }
+    }
+    return null;
+}
+function itemInRoom(itemName) {
+    for (var i=0; i<current.items.length; i++) {
+        if (current.items[i].name.toUpperCase() == itemName.toUpperCase()) {
+            return current.items[i];
+        }
+    }
+    return null;
 }
 function take(item) {
-    // do this *** TO DO ***
-    // this is the part in textParse
-    if (isInInv(split[1])) {
-        display("I already have that.");
-        return;
+    var inventoryTitle = document.getElementById("inventoryTitle");
+    var itemList = document.getElementById("itemList");
+    if (inventory.length==0) {
+      inventoryTitle.innerHTML="Inventory";
     }
-    if (isInRoom(split[1])) {
-        var inventoryTitle = document.getElementById("inventoryTitle");
-        var itemList = document.getElementById("itemList");
-        if (inventory.length==0) {
-          inventoryTitle.innerHTML="Inventory";
-        }
-        inventory.push(current.items[j]);
-        var itemStub = document.createElement("li");
-        itemStub.innerHTML = current.items[j].name;
-        itemStub.setAttribute("id", current.items[j].name);
-        itemList.appendChild(itemStub);
-        display("Took "+current.items[j].name+".");
-        if (!(current.items[j].name.toUpperCase() === "RATIONS") || !(current == Cafe)) {
-            current.items.splice(j,1);
-        }
-    }
-    if (!isInRoom(split[1])) {
-        display("I can't see that.");
+    inventory.push(item);
+    var itemStub = document.createElement("li");
+    itemStub.innerHTML = item.name;
+    itemStub.setAttribute("id", item.name);
+    itemList.appendChild(itemStub);
+    display("Took "+item.name+".");
+    document.getElementById("form").reset();
+    if (!(item.name.toUpperCase() === "RATIONS") || !(current == Cafe)) {
+        current.items.splice(j,1);
     }
 }
 function isInRoom(nameInSplit) {
     // replace duplication of code with this abstraction
     var inRoom = false;
     for (var i = 0; i<current.items.length; i++) {
-        if (nameInSplit.toUpperCase() == current.items[i].name.toUpperCase()) {
+        if (nameInSplit.toUpperCase() === current.items[i].name.toUpperCase()) {
             inRoom = true;
         }
     }
@@ -50,7 +51,7 @@ function isInInv(nameInSplit) {
     // replace duplication of code with this abstraction
     var inInv = false;
     for (var i = 0; i<inventory.length; i++) {
-        if (nameInSplit.toUpperCase() == inventory[i].name.toUpperCase()) {
+        if (nameInSplit.toUpperCase() === inventory[i].name.toUpperCase()) {
             inInv = true;
         }
     }
@@ -301,37 +302,15 @@ function textParse(split) {
     lookAt(split);
   }
   else if (split[0].toUpperCase() === "TAKE" || split[0].toUpperCase() === "GET" || split[0].toUpperCase() == "GRAB" || split[0].toUpperCase() == "T") {
-    var taken=false;
-    for (var k=0; k<inventory.length; k++) {
-        if (split[1].toUpperCase() == inventory[k].name.toUpperCase()) {
-            taken=true;
-        }
-    }
-    if (taken) {
+    if (isInInv(split[1])) {
         display("I already have that.");
-        return;
     }
-    var found=false;
-    for (var j =0; j<current.items.length; j++){
-      if (current.items[j].name.toUpperCase() === split[1].toUpperCase()){
-        var inventoryTitle = document.getElementById("inventoryTitle");
-        var itemList = document.getElementById("itemList");
-        if (inventory.length==0) {
-          inventoryTitle.innerHTML="Inventory";
-        }
-        inventory.push(current.items[j]);
-        var itemStub = document.createElement("li");
-        itemStub.innerHTML = current.items[j].name;
-        itemStub.setAttribute("id", current.items[j].name);
-        itemList.appendChild(itemStub);
-        display("Took "+current.items[j].name+".");
-        if (!(current.items[j].name.toUpperCase() === "RATIONS") || !(current == Cafe)) {
-            current.items.splice(j,1);
-        }
-        found=true;
-      }
+    else if (isInRoom(split[1])) {
+        take(itemInRoom(split[1]));
+        // for some reason I have to do this 
+        // **TODO** reset form
     }
-    if (!found) {
+    else {
         display("I can't see that.");
     }
   }
@@ -373,15 +352,11 @@ function textParse(split) {
     // remove from inventory
     // display it was dropped
     // add it to the items array of current
-    var hasItem = false;
-    for (var m = 0; m<inventory.length; m++) {
-        if (inventory[m].name.toUpperCase() == split[1].toUpperCase()) {
-            drop(inventory[m]);
-            hasItem = true;
-        }
-    }
-    if (!hasItem) {
+    if (!(isInInv(split[1]))) {
         display("I can't drop something I don't have.");
+    }
+    else {
+        drop(itemInInv(split[1]));
     }
   }
   // else if () unlock
@@ -424,6 +399,7 @@ function handleSubmit() {
     pNum--;
   }
   form.reset();
+  input.value = "";
 }
 
 var input = document.getElementById("input");
