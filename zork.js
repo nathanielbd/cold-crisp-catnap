@@ -359,8 +359,12 @@ function textParse(split) {
         drop(itemInInv(split[1]));
     }
   }
-  // else if () unlock
-  // else if () lock
+  // ** TO DO **
+  // else if (any of the items or mods have a key in their map that corresponds to split[0])
+  else if (splitHasCommand(split)) {
+    var command = findCommand(split);
+    command();
+  }
   else {
       display("I'm not sure what that means.");
   }

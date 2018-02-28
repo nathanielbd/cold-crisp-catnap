@@ -5,7 +5,7 @@ function Item(name, desc, init){
     this.name = name;
     this.desc = desc;
     this.init = init;
-    // this.commands = new Map(); // this will be a map if there are special specific commands
+    this.commands = new Map(); // this will be a map if there are special specific commands
     this.lookAt = function() {
       display(this.desc);
     };
@@ -15,6 +15,26 @@ function Item(name, desc, init){
     this.use = function() {
       display("I don't think this will be useful right now.");
     };
+}
+
+function splitHasCommand(split) {
+  // later add functionality for Mod class
+  var hasCommand = false;
+  for (var i = 0; i<inventory.length; i++) {
+    if (inventory[i].commands.has(split[0].toUpperCase())) {
+      hasCommand = true;
+    }
+  }
+  return hasCommand;
+}
+
+function findCommand(split) {
+  for (var i =0; i<inventory.length; i++) {
+    if (inventory[i].commands.has(split[0].toUpperCase())) {
+      var command = inventory[i].commands.get(split[0].toUpperCase());
+      return command;
+    }
+  }
 }
   
 function Room(name, desc){
@@ -143,6 +163,53 @@ flask.use = function() {
 };
 
 var key = new Item("key", "The captain's access card.", "There's a key in the far corner.");
+function unlock() {
+  // change so that you don't unlock a door that is not open
+  if ((current.north !== undefined) && current.north.locked && current.north.open) {
+    current.north.locked = false;
+    display("Unlocked the north door.");
+  }
+  else if ((current.east !== undefined) && current.east.locked && current.east.open) {
+    current.east.locked = false;
+    display("Unlocked the east door.");
+  }
+  else if ((current.south !== undefined) && current.south.locked && current.south.open) {
+    current.south.locked = false;
+    display("Unlocked the south door.");
+  }
+  else if ((current.west !== undefined) && current.west.locked && current.west.open) {
+    current.west.locked = false;
+    display("Unlocked the west door.");
+  }
+  else {
+    display("All the doors are unready unlocked.");
+  }
+}
+function lock() {
+  // change so that you don't lock a door that is not open
+  if ((current.north !== undefined) && !(current.north.locked) && current.north.open) {
+    current.north.locked = true;
+    display("Locked the north door.");
+  }
+  else if ((current.east !== undefined) && !(current.east.locked) && current.east.open) {
+    current.east.locked = true;
+    display("Locked the east door.");
+  }
+  else if ((current.south !== undefined) && !(current.south.locked) && current.south.open) {
+    current.south.locked = true;
+    display("Locked the south door.");
+  }
+  else if ((current.west !== undefined) && !(current.west.locked) && current.west.open) {
+    current.west.locked = true;
+    display("Locked the west door.");
+  }
+  else {
+    display("All the doors are unready locked.");
+  }
+}
+// *** in order to make case-checking easier, make all the keys uppercase ***
+key.commands.set("UNLOCK", unlock);
+key.commands.set("LOCK", lock);
 // make unlock and lock functions specific to key
 
 // this doesn't work yet
