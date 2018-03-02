@@ -1,11 +1,22 @@
-function Mod(init) {
+function Mod(name, desc, init) {
   // special module for computer system, mass spec, etc.
+  this.name = name;
+  this.desc = desc;
+  this.init = init;
+  this.look = function() {
+    display(this.init);
+  };
+  this.lookAt = function() {
+    display(this.desc);
+  };
+  this.commands = new Map(); // all keys in the map must be uppercase to make case-checking easier
 }
 function Item(name, desc, init){
     this.name = name;
     this.desc = desc;
     this.init = init;
     this.commands = new Map(); // this will be a map if there are special specific commands
+    // all keys in the map must be uppercase to make case-checking easier
     this.lookAt = function() {
       display(this.desc);
     };
@@ -13,15 +24,22 @@ function Item(name, desc, init){
       display(this.init);
     };
     this.use = function() {
+      // now that I have specific commands, make it a module with the use function
       display("I don't think this will be useful right now.");
     };
 }
 
 function splitHasCommand(split) {
   // later add functionality for Mod class
+  // what if the command has multiple tokens, like "turn on flashlight"?
   var hasCommand = false;
   for (var i = 0; i<inventory.length; i++) {
     if (inventory[i].commands.has(split[0].toUpperCase())) {
+      hasCommand = true;
+    }
+  }
+  for (var i = 0; i<current.mods.length; i++) {
+    if (current.mods[i].commands.has(split[0].toUpperCase())) {
       hasCommand = true;
     }
   }
@@ -29,9 +47,16 @@ function splitHasCommand(split) {
 }
 
 function findCommand(split) {
-  for (var i =0; i<inventory.length; i++) {
+  // add funcationality for Mod class
+  for (var i = 0; i<inventory.length; i++) {
     if (inventory[i].commands.has(split[0].toUpperCase())) {
       var command = inventory[i].commands.get(split[0].toUpperCase());
+      return command;
+    }
+  }
+  for (var i = 0; i<current.mods.length; i++) {
+    if (current.mods[i].commands.has(split[0].toUpperCase())) {
+      var command = current.mods[i].commands.get(split[0].toUpperCase());
       return command;
     }
   }
@@ -43,6 +68,7 @@ function Room(name, desc){
     this.south = undefined;
     this.west = undefined;
     this.items = [];
+    this.mods = [];
     this.name = name;
     this.desc = desc;
     this.open = true;
@@ -53,10 +79,16 @@ function Room(name, desc){
         this.items[i].look();
       }
     };
+    this.modLook = function() {
+      for (var i = 0; i<this.mods.length; i++) {
+        this.mods[i].look();
+      }
+    };
     this.look = function() {
       display("<b>" + this.name + "</b>");
       display(this.desc);
       this.itemLook();
+      this.modLook();
     }
 }
   
@@ -121,6 +153,8 @@ flashlight.use = function() {
     display("I don't think this will be useful right now.");
   }
 };
+
+
 // need some item to unlock rooms
 var rations = new Item("rations","The standard rations. Dry, not fun, but all-around better than starving.", "I know a way to cheat the dispenser to get some free rations.");
 rations.look = function() {
@@ -134,6 +168,8 @@ rations.look = function() {
 rations.use = function() {
   display("I'm not hungry right now.");
 };
+rations.commands.set("EAT", rations.use);
+
 // have some way to use the food from the cafeteria, possibly multiple times
 
 // why is there blood in this story? probably from the grue
@@ -161,74 +197,81 @@ flask.use = function() {
     display("There's nothing in this room that I can hold in this flask.");
   }
 };
+// empty flask and fill flask commands
 
 var key = new Item("key", "The captain's access card.", "There's a key in the far corner.");
-function unlock() {
-  // change so that you don't unlock a door that is not open
-  if ((current.north !== undefined) && current.north.locked && current.north.open) {
-    current.north.locked = false;
-    display("Unlocked the north door.");
-  }
-  else if ((current.east !== undefined) && current.east.locked && current.east.open) {
-    current.east.locked = false;
-    display("Unlocked the east door.");
-  }
-  else if ((current.south !== undefined) && current.south.locked && current.south.open) {
-    current.south.locked = false;
-    display("Unlocked the south door.");
-  }
-  else if ((current.west !== undefined) && current.west.locked && current.west.open) {
-    current.west.locked = false;
-    display("Unlocked the west door.");
+function unlock(split) {
+  // add split.includes("north") etc. to each condition
+  if (split.length > 1) {
+    if ((split[1].toUpperCase() == "NORTH") && (current.north !== undefined) && current.north.locked && current.north.open) {
+      current.north.locked = false;
+      display("Unlocked the north door.");
+    }
+    else if ((split[1].toUpperCase() == "EAST") && (current.east !== undefined) && current.east.locked && current.east.open) {
+      current.east.locked = false;
+      display("Unlocked the east door.");
+    }
+    else if ((split[1].toUpperCase() == "SOUTH") && (current.south !== undefined) && current.south.locked && current.south.open) {
+      current.south.locked = false;
+      display("Unlocked the south door.");
+    }
+    else if ((split[1].toUpperCase() == "WEST") && (current.west !== undefined) && current.west.locked && current.west.open) {
+      current.west.locked = false;
+      display("Unlocked the west door.");
+    }
+    else {
+      display("I can't unlock that.");
+    }
   }
   else {
-    display("All the doors are unready unlocked.");
+    display("I'm not sure what I'm trying to unlock.");
   }
 }
-function lock() {
+function lock(split) {
   // change so that you don't lock a door that is not open
-  if ((current.north !== undefined) && !(current.north.locked) && current.north.open) {
-    current.north.locked = true;
-    display("Locked the north door.");
-  }
-  else if ((current.east !== undefined) && !(current.east.locked) && current.east.open) {
-    current.east.locked = true;
-    display("Locked the east door.");
-  }
-  else if ((current.south !== undefined) && !(current.south.locked) && current.south.open) {
-    current.south.locked = true;
-    display("Locked the south door.");
-  }
-  else if ((current.west !== undefined) && !(current.west.locked) && current.west.open) {
-    current.west.locked = true;
-    display("Locked the west door.");
+  if (split.length > 1) {
+    if ((split[1].toUpperCase() == "NORTH") && (current.north !== undefined) && !(current.north.locked) && current.north.open) {
+      current.north.locked = true;
+      display("Locked the north door.");
+    }
+    else if ((split[1].toUpperCase() == "EAST") && (current.east !== undefined) && !(current.east.locked) && current.east.open) {
+      current.east.locked = true;
+      display("Locked the east door.");
+    }
+    else if ((split[1].toUpperCase() == "SOUTH") && (current.south !== undefined) && !(current.south.locked) && current.south.open) {
+      current.south.locked = true;
+      display("Locked the south door.");
+    }
+    else if ((split[1].toUpperCase() == "WEST") && (current.west !== undefined) && !(current.west.locked) && current.west.open) {
+      current.west.locked = true;
+      display("Locked the west door.");
+    }
+    else {
+      display("I can't lock that.");
+    }
   }
   else {
-    display("All the doors are unready locked.");
+    display("I'm not sure what I'm trying to lock.");
   }
 }
 // *** in order to make case-checking easier, make all the keys uppercase ***
 key.commands.set("UNLOCK", unlock);
 key.commands.set("LOCK", lock);
-// make unlock and lock functions specific to key
 
-// this doesn't work yet
-// key.use = function(room) {
-//   if (room.locked) {
-//     room.locked = false;
-//     display("Unlocked the door.");
-//   }
-//   else {
-//     room.locked = true;
-//     display("Locked the door.");
-//   }
-// };
+var Mass_spec = new Mod("Mass Spec", "A mass spectrometer commonly used to analyze the chemical makeup of a substance in a flask.", "There's a mass spec in the room.");
+function analyze(split) {
+  // use split.includes();
+  
+};
+Mass_spec.commands.set("ANALYZE", analyze);
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
 Cafe.items.push(rations);
 Lab.items.push(flask);
 Crew_quarters.items.push(key);
+
+Lab.mods.push(Mass_spec);
 
   // adjust open boolean
   

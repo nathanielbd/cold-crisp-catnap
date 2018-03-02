@@ -34,7 +34,12 @@ function take(item) {
     display("Took "+item.name+".");
     document.getElementById("form").reset();
     if (!(item.name.toUpperCase() === "RATIONS") || !(current == Cafe)) {
-        current.items.splice(j,1);
+        for (var i = 0; i<current.items.length; i++) {
+            if (current.items[i] == item) {
+                var index = i;
+            }
+        }
+        current.items.splice(index , 1);
     }
 }
 function isInRoom(nameInSplit) {
@@ -75,6 +80,7 @@ function drop(item) {
 }
 function lookAt(split) {
     // something here or in a room or item is causing the pNum to go below
+    // how do you look at something with a two-word name
     if (split.length==1) {
         current.look();
     }
@@ -92,6 +98,7 @@ function lookAt(split) {
             }
         }
     }
+    // else if there is something to look at that has a two-word name
     else if (split[0].toUpperCase() == "READ" && split.length == 2) {
         for(var i=0;i<current.items.length;i++){
             if(split[1].toUpperCase() == current.items[i].name.toUpperCase()){
@@ -289,6 +296,7 @@ function go(direction) {
 }
 function textParse(split) {
     // instead of requiring with &&, write error messages like "where do i go?" or "what should i take?"
+    // ** TODO **: hit, throw, look at <stuff that aren't items>, 
   if (split[0].toUpperCase() == "GO" && split.length == 2) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
     go(split[1]);
@@ -363,7 +371,7 @@ function textParse(split) {
   // else if (any of the items or mods have a key in their map that corresponds to split[0])
   else if (splitHasCommand(split)) {
     var command = findCommand(split);
-    command();
+    command(split);
   }
   else {
       display("I'm not sure what that means.");
