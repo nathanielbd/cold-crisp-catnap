@@ -1,3 +1,7 @@
+window.onbeforeunload = function(event) {
+  return confirm("Do you really wanna refresh? You'd lose all your progress.");
+};
+
 var pNum = 0;
 
 function display(text) {

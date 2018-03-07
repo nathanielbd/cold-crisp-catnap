@@ -11,7 +11,9 @@ function Mod(name, desc, init) {
   };
   this.commands = new Map(); // all keys in the map must be uppercase to make case-checking easier
 }
-function Item(name, desc, init){
+function Item(name, desc, init) {
+    // there really should just be a boolean for if the item is able to be taken, then there is no need for the Mod class
+    // this.takeable = true;
     this.name = name;
     this.desc = desc;
     this.init = init;
@@ -148,6 +150,8 @@ var flashlight = new Item("flashlight","A perfectly normal flashlight.","A flash
 flashlight.use = function() {
   if (current == Cargo_bay) {
     // light up the room and reveal some more items
+    Cargo_bay.desc = "Below a spiral of steel stairs and amid  the maze of cargo rests a monstruous grue. I think it just blinked at me.";
+    Cargo_bay.look();
   }
   else {
     display("I don't think this will be useful right now.");

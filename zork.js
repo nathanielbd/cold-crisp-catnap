@@ -121,6 +121,7 @@ function lookAt(split) {
 }
 function go(direction) {
   // add shorthand like gw or gn or ga or gf
+  // *** TODO *** check if the grue is there
   var success=true;
   if (direction.length == 2 && direction.charAt(0).toUpperCase() == 'G') {
     if (direction.toUpperCase() == "GN") {
