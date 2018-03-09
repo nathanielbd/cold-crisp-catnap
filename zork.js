@@ -1,8 +1,3 @@
-// *** Abstraction TODO ***
-// isInRoom() loop through current.items ==> has item
-// isInInv() loop through inventory ==> has item
-// take()
-
 var inventory = [];
 function itemInInv(itemName) {
     for (var i=0; i<inventory.length; i++) {
@@ -14,13 +9,20 @@ function itemInInv(itemName) {
 }
 function itemInRoom(itemName) {
     for (var i=0; i<current.items.length; i++) {
-        if (current.items[i].name.toUpperCase() == itemName.toUpperCase()) {
+        if (current.items[i].name.toUpperCase().includes(itemName.toUpperCase())) {
             return current.items[i];
+        }
+    }
+    // case if Mod
+    for (var i = 0; i<current.mods.length; i++) {
+        if (current.mods[i].name.toUpperCase().includes(itemName.toUpperCase())) {
+            return current.mods[i];
         }
     }
     return null;
 }
 function take(item) {
+    // consider takeable boolean
     var inventoryTitle = document.getElementById("inventoryTitle");
     var itemList = document.getElementById("itemList");
     if (inventory.length==0) {
@@ -45,11 +47,30 @@ function take(item) {
 function isInRoom(nameInSplit) {
     // replace duplication of code with this abstraction
     var inRoom = false;
-    for (var i = 0; i<current.items.length; i++) {
-        if (nameInSplit.toUpperCase() === current.items[i].name.toUpperCase()) {
-            inRoom = true;
+    // if (splitName.length == 1) {
+    //     for (var i = 0; i<current.items.length; i++) {
+    //         if (nameInSplit.toUpperCase() === current.items[i].name.toUpperCase()) {
+    //             inRoom = true;
+    //         }
+    //     }
+    //     for (var i = 0; i<current.mods.length; i++) {
+    //         if (nameInSplit.toUpperCase() == current.mods[i].name.toUpperCase()) {
+    //             inRoom = true;
+    //         }
+    //     }
+    // }
+    // else {
+        for (var i = 0; i<current.items.length; i++) {
+            if (current.items[i].name.toUpperCase().includes(nameInSplit.toUpperCase())) {
+                inRoom = true;
+            }
         }
-    }
+        for (var i = 0; i<current.mods.length; i++) {
+            if (current.mods[i].name.toUpperCase().includes(nameInSplit.toUpperCase())) {
+                inRoom = true;
+            }
+        }
+    // }
     return inRoom;
 }
 function isInInv(nameInSplit) {
@@ -80,22 +101,65 @@ function drop(item) {
 }
 function lookAt(split) {
     // something here or in a room or item is causing the pNum to go below
-    // how do you look at something with a two-word name
+    // how do you look at something with a two-word name?
+
+    // *** TODO ***
+    // have case of two-word name
+    // be able to look at a Mod
     if (split.length==1) {
         current.look();
     }
+    // loop through all of split and put all of them to uppercase
+    // then use split.includes(name.toUpperCase())
+    // to consider case of two-word name, you have to split the name and loop the uppercase and then use includes
+    // actually don't loop cuz there will never be larger than two-word name
     else if (split[1].toUpperCase() == "AT" && split.length == 3) {
-        // should check if you are holding the object
-        for(var i=0;i<current.items.length;i++){
-            if(split[2].toUpperCase() == current.items[i].name.toUpperCase()){
-                // look at the item
-                current.items[i].lookAt();
+        // if in room
+        // look at itemInRoom(split[2])
+        // or if two-word name
+        if (isInRoom(split[2]) || isInInv(split[2])) {
+            for(var i=0;i<current.items.length;i++){
+                if(split[2].toUpperCase() == current.items[i].name.toUpperCase()){
+                    // look at the item
+                    current.items[i].lookAt();
+                }
+            }
+            for(var j=0;j<inventory.length;j++){
+                if(split[2].toUpperCase() == inventory[j].name.toUpperCase()){
+                    inventory[j].lookAt();
+                }
+            }
+            for(var k = 0; k<current.mods.length; k++) {
+                if(split[2].toUpperCase() == current.mods[k].name.toUpperCase()) {
+                    current.mods[k].lookAt();
+                }
             }
         }
-        for(var j=0;j<inventory.length;j++){
-            if(split[2].toUpperCase() == inventory[j].name.toUpperCase()){
-                inventory[j].lookAt();
-            }
+        else {
+            display("I can't see that.");
+        }
+    }
+    else if (split[1].toUpperCase() == "AT" && split.length == 4) {
+        if (isInRoom(split[2]) || isInInv(split[2])) {
+            // for (var i = 0; i<current.items.length; i++) {
+            //     if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            //         current.items[i].lookAt();
+            //     }
+            // }
+            // for (var i = 0; i<inventory.length; i++) {
+            //     if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            //         inventory[i].lookAt();
+            //     }
+            // }
+            // for (var i = 0; i<current.mods.length; i++) {
+            //     if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            //         current.mods[i].lookAt();
+            //     }
+            // }
+            itemInRoom(split[2]).lookAt();
+        }
+        else {
+            display("I can't see that.");
         }
     }
     // else if there is something to look at that has a two-word name
@@ -107,13 +171,27 @@ function lookAt(split) {
             }
         }
         for(var j=0;j<inventory.length;j++){
-            if(split[1].toUpperCase() == inventory[j].name.toUpperCase()){
+            if(split[1].toUpperCase() == inventory[j].name.toUpperCase()) {
                 inventory[j].lookAt();
             }
         }
     }
-    else if (split.length == 1) {
-        current.look();
+    else if (split[0].toUpperCase() == "READ" && split.length == 3) {
+        for (var i = 0; i<current.items.length; i++) {
+            if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                current.items[i].lookAt();
+            }
+        }
+        for (var i = 0; i<inventory.length; i++) {
+            if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                inventory[i].lookAt();
+            }
+        }
+        for (var i = 0; i<current.mods.length; i++) {
+            if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                current.mods[i].lookAt();
+            }
+        }
     }
     else {
         display("I'm not sure what I'm supposed to be looking at.");
@@ -298,6 +376,7 @@ function go(direction) {
 function textParse(split) {
     // instead of requiring with &&, write error messages like "where do i go?" or "what should i take?"
     // ** TODO **: hit, throw, look at <stuff that aren't items>, 
+    // consider shorthands
   if (split[0].toUpperCase() == "GO" && split.length == 2) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
     go(split[1]);
@@ -310,27 +389,33 @@ function textParse(split) {
     // 'look at slajfl;akjdflkj' just looks at the room
     lookAt(split);
   }
-  else if (split[0].toUpperCase() === "TAKE" || split[0].toUpperCase() === "GET" || split[0].toUpperCase() == "GRAB" || split[0].toUpperCase() == "T") {
+  else if (split[0].toUpperCase() === "TAKE" || split[0].toUpperCase() === "GET" || split[0].toUpperCase() == "GRAB" || split[0].toUpperCase() == "T" && split.length >= 2) {
     if (isInInv(split[1])) {
         display("I already have that.");
     }
     else if (isInRoom(split[1])) {
         take(itemInRoom(split[1]));
-        // for some reason I have to do this 
-        // **TODO** reset form
     }
+    // case two-word name
     else {
         display("I can't see that.");
     }
   }
-  else if (split[0].toUpperCase() == "USE" && split.length == 2) {
-    // consider case user does not have the item
-    // why doesn't "use flask" work??
-    // why doesn't "use poster" work???
+  else if (split[0].toUpperCase() == "USE" && split.length >= 2) {
+    // remove the length condition
+    // consider case of two-word name
     if (isInInv(split[1])) {
         for (var l=0; l<inventory.length; l++) {
-            if (split[1].toUpperCase() == inventory[l].name.toUpperCase()) {
-                inventory[l].use();
+            if (split.length == 2) {
+                if (split[1].toUpperCase() == inventory[l].name.toUpperCase()) {
+                    inventory[l].use();
+                }
+            }
+            else {
+                // case if two-word name
+                if (inventory[l].name.toUpperCase().includes(split[1].toUpperCase()) && inventory[l].name.toUpperCase().includes(split[2].toUpperCase())) {
+                    inventory[l].use();
+                }
             }
         }
     }
@@ -342,22 +427,8 @@ function textParse(split) {
     // case if alien is in the room
     display("Talking to oneself is a stress coping mechanism; however, it's not the right one for me.");
   }
-  // go
-    // shorthand
-  // look
-    // Look at
-    // add 'read' just in case they type read
-    // shorthand
-  // Take or get
-    // Make sure to add it to sidebar inventory
-    // shorthand *** TODO ***
-  // Use
-    // shorthand *** TODO ***
-  // Say
-  // Drop *** TODO ***
-  // unlock *TODO*
-  // lock *TODO*
   else if (split[0].toUpperCase() == "DROP" && split.length == 2) {
+    // remove the length condition
     // remove from inventory
     // display it was dropped
     // add it to the items array of current

@@ -1,5 +1,6 @@
 function Mod(name, desc, init) {
   // special module for computer system, mass spec, etc.
+  // this.takeable = false;
   this.name = name;
   this.desc = desc;
   this.init = init;
@@ -262,12 +263,14 @@ function lock(split) {
 key.commands.set("UNLOCK", unlock);
 key.commands.set("LOCK", lock);
 
-var Mass_spec = new Mod("Mass Spec", "A mass spectrometer commonly used to analyze the chemical makeup of a substance in a flask.", "There's a mass spec in the room.");
+var mass_spec = new Mod("mass spec", "A mass spectrometer commonly used to analyze the chemical makeup of a substance in a flask.", "There's a mass spec in the room.");
 function analyze(split) {
   // use split.includes();
   
 };
-Mass_spec.commands.set("ANALYZE", analyze);
+mass_spec.commands.set("ANALYZE", analyze);
+
+var body = new Mod("body", "An alien body. It seems to have died recently from a wound.", "");
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
@@ -275,7 +278,8 @@ Cafe.items.push(rations);
 Lab.items.push(flask);
 Crew_quarters.items.push(key);
 
-Lab.mods.push(Mass_spec);
+Lab.mods.push(mass_spec);
+Sleep_chamber.mods.push(body);
 
   // adjust open boolean
   
