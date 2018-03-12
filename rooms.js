@@ -181,7 +181,7 @@ rations.commands.set("EAT", rations.use);
 
 // the blood is acidic, so when you put it in the chemical analyzer, it corrodes and destroys it
 var flask = new Item("flask", "An ordinary lab flask.", "A flask lies on floor.");
-flask.use = function() {
+function fillFlask() {
   if (current == Sleep_chamber) {
     flask.name = "flask with blood";
     flask.desc = "A lab flask filled with blood";
@@ -193,16 +193,14 @@ flask.use = function() {
     itemStub.setAttribute("id", flask.name);
     itemList.replaceChild(itemStub, prev);
     display("Took blood.");
-    // should I just update so that it says "flask with blood?"
-
-  // have some else ifs for other things other than blood
-  // make some way to empty flask
   }
   else {
     display("There's nothing in this room that I can hold in this flask.");
   }
-};
-// empty flask and fill flask commands
+}
+flask.use = fillFlask;
+flask.commands.set("FILL", fillFlask);
+
 
 var key = new Item("key", "The captain's access card.", "There's a key in the far corner.");
 function unlock(split) {
@@ -259,18 +257,23 @@ function lock(split) {
     display("I'm not sure what I'm trying to lock.");
   }
 }
+key.use = function() {
+  display("I'm not sure whether I'm unlocking or locking with this key.");
+};
 // *** in order to make case-checking easier, make all the keys uppercase ***
 key.commands.set("UNLOCK", unlock);
 key.commands.set("LOCK", lock);
 
 var mass_spec = new Mod("mass spec", "A mass spectrometer commonly used to analyze the chemical makeup of a substance in a flask.", "There's a mass spec in the room.");
 function analyze(split) {
-  // use split.includes();
-  
+  // use split.includes(); for blood or if it includes flask, also check if it has blood
+  // case 1: analyze flask with blood
+  // case 2: display("i cant analyze that")
 };
 mass_spec.commands.set("ANALYZE", analyze);
 
 var body = new Mod("body", "An alien body. It seems to have died recently from a wound.", "");
+var blood = new Mod("blood", "Some green nasty-looking alien blood.", "");
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);

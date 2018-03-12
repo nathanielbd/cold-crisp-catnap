@@ -26,14 +26,10 @@ function display3() {
 }
 
 function display4() {
-  display("As refreshing as the nap was, I didn't like what I was waking up to;");
+  display("As refreshing as the nap was, I didn't like what I was waking up to; shards of glass and green specks dotted the floor. A faint siren can be heard to the aft/south side.");
 }
 
 function display5() {
-  display("shards of glass and green specks dotted the floor. A faint siren can be heard to the aft/south side.");
-}
-
-function display6() {
   display("Ugh. My boss is going to give me an earful today.");
 }
 
@@ -83,7 +79,6 @@ setTimeout(display2, 6000);
 setTimeout(display3, 9000);
 setTimeout(display4, 12000);
 setTimeout(display5, 15000);
-setTimeout(display6, 18000);
-setTimeout(initLook, 19000);
-setTimeout(enable, 19000);
+setTimeout(initLook, 16000);
+setTimeout(enable, 16000);
 // disable the form input for the intro
