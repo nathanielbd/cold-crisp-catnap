@@ -29,6 +29,8 @@ function display4() {
   display("As refreshing as the nap was, I didn't like what I was waking up to; shards of glass and green specks dotted the floor. A faint siren can be heard to the aft/south side.");
 }
 
+// I need to actually address the siren
+
 function display5() {
   display("Ugh. My boss is going to give me an earful today.");
 }
@@ -74,11 +76,12 @@ function toDark() {
 }
 toggleTheme.addEventListener("click", toLight);
 
+//** TODO ** adjust the timing
 setTimeout(display1, 3000);
 setTimeout(display2, 6000);
 setTimeout(display3, 9000);
-setTimeout(display4, 12000);
-setTimeout(display5, 15000);
-setTimeout(initLook, 16000);
-setTimeout(enable, 16000);
+setTimeout(display4, 14000);
+setTimeout(display5, 17000);
+setTimeout(initLook, 18000);
+setTimeout(enable, 18000);
 // disable the form input for the intro

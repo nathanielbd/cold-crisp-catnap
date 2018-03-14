@@ -1,3 +1,11 @@
+// In order to add the grue into this I need to:
+// implement it as a mod?
+// consider it in the "go" method
+// function inside the handleSubmit that moves the grue
+  // create an array of current.north, east, south, west that are not locked or closed
+  // randomly choose one to move to
+// nevermind - the cleaner monster will be the creature that moves
+
 function Mod(name, desc, init) {
   // special module for computer system, mass spec, etc.
   // this.takeable = false;
@@ -76,6 +84,7 @@ function Room(name, desc){
     this.desc = desc;
     this.open = true;
     this.locked = false;
+    this.corroded = false;
     //a function that prints the name and desc when the room is entered
     this.itemLook = function() {
       for(var i = 0; i<this.items.length; i++){
@@ -106,14 +115,14 @@ function leftRight(left, right){
 }
   
 var Sleep_chamber = new Room("Sleep Chamber","The chamber in which I slept in induced cyrogenic hibernation.\nMy sleep pod seems to have blown a fuse. There are a few other malfunctioned pods.\nMost of the crew seems to still be in hibernation.\nThere is a single exit to the starboard/east side.<br><br>A body with a pool of green blood lies across the floor.");
-var Hall1 = new Room("Main Hallway","A hallway stretches north and south.\nThere are entrances to the west, south, and east.");
+var Hall1 = new Room("South end of Main Hallway","A hallway stretches north and south.\nThere are entrances to the west, south, and east.");
 var Hall2 = new Room("Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the west.");
 var Hall3 = new Room("Main Hallway","A hallway strtches north and south.\nThere are entrances to the west and east.");
-var Hall4 = new Room("Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the north.");
+var Hall4 = new Room("North end of Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the north.");
 var Escape_pod = new Room("Escape Pod","An escape pod. The south window is blocked by an alien growth.\nThere is an exit to the west.");
 var Airlock = new Room("Airlock","The airlock of the vessel. There is a spacesuit contained within a glass chamber in the far corner;\nhowever, an identical chamber is shattered in the other corner.");
 var Bridge = new Room("Bridge","Write an actual description here. There is a single exit to the south.");
-var Engineering = new Room("Engineering","Write an actual description here. There are exits to the north, west, and south.");
+var Engineering = new Room("Engineering","Write an actual description here. The siren is loudest here. There are exits to the north, west, and south.");
 var Cargo_bay = new Room("Cargo Bay","It is pitch black. I hope I am not eaten by a grue.");
 var Lab = new Room("Laboratory","I bet science goes on in here. The exit is to the east.");
 var Cafe = new Room("Cafeteria","Food. Exits to the west and east.");
@@ -265,24 +274,71 @@ key.commands.set("UNLOCK", unlock);
 key.commands.set("LOCK", lock);
 
 var mass_spec = new Mod("mass spec", "A mass spectrometer commonly used to analyze the chemical makeup of a substance in a flask.", "There's a mass spec in the room.");
+function cannotAnalyzeNoMore() {
+  display("The mass spec is broken.");
+}
+function displayAcidMessage() {
+  display("No, the blood was corroding the mass spec! <br> I had to remove the sample from the machine.");
+  mass_spec.commands.set("ANALYZE", cannotAnalyzeNoMore);
+  flask.name = "flask with corrosive blood";
+  flask.desc = "A lab flask filled with corrosive blood";
+  flask.init = "A blood-filled flask lies on the floor.";
+  var itemList = document.getElementById("itemList");
+  var itemStub = document.createElement("li");
+  var prev = document.getElementById("flask with blood");
+  itemStub.innerHTML = flask.name;
+  itemStub.setAttribute("id", flask.name);
+  itemList.replaceChild(itemStub, prev);
+}
 function analyze(split) {
   // use split.includes(); for blood or if it includes flask, also check if it has blood
   // case 1: analyze flask with blood
   // case 2: display("i cant analyze that")
-};
+  for (var i = 0; i < split.length; i++) {
+    split[i] = split[i].toUpperCase();
+  }
+  if (isInInv("flask with blood") && split.includes("BLOOD")) {
+    display("Analyzing blood sample...");
+    setTimeout(displayAcidMessage, 2100);
+  }
+  else {
+    display("I can't analyze that.");
+  }
+}
 mass_spec.commands.set("ANALYZE", analyze);
+
+var scientists_log = new Item("scientist's log", "I can access the most recent log, but the others are locked. <br> <br> Log 84 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed. <br> <br> I guess we have a cleaner monster on our hands.", "The scientist's log lies face-down.");
 
 var body = new Mod("body", "An alien body. It seems to have died recently from a wound.", "");
 var blood = new Mod("blood", "Some green nasty-looking alien blood.", "");
+var cleaner_monster = new Mod("cleaner monster", "The monster scurried off to the adjacent room.", "A stange, small monster clumsily stumbles past you.");
+cleaner_monster.look = function() {
+  // do nothing
+}
+cleaner_monster.lookAt = function() {
+  if (isInInv("scientist's log")) {
+    display("The cleaner monster clumsily stumbles past you");
+  }
+  else {
+    display(this.init);
+  }
+};
+
+// ** TO DO ** I need to make a captain's key that unlocks the other logs in the scientist's log
+// ** TO DO ** rename key to access card
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
 Cafe.items.push(rations);
 Lab.items.push(flask);
+Lab.items.push(scientists_log);
 Crew_quarters.items.push(key);
 
 Lab.mods.push(mass_spec);
 Sleep_chamber.mods.push(body);
+Sleep_chamber.mods.push(blood);
+Engineering.mods.push(cleaner_monster);
+var cleaner_monster_location = Engineering;
 
   // adjust open boolean
   

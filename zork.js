@@ -1,7 +1,7 @@
 var inventory = [];
 function itemInInv(itemName) {
     for (var i=0; i<inventory.length; i++) {
-        if (inventory[i].name.toUpperCase() == itemName.toUpperCase()) {
+        if (inventory[i].name.toUpperCase().includes(itemName.toUpperCase())) {
             return inventory[i];
         }
     }
@@ -77,7 +77,7 @@ function isInInv(nameInSplit) {
     // replace duplication of code with this abstraction
     var inInv = false;
     for (var i = 0; i<inventory.length; i++) {
-        if (nameInSplit.toUpperCase() === inventory[i].name.toUpperCase()) {
+        if (inventory[i].name.toUpperCase().includes(nameInSplit.toUpperCase())) {
             inInv = true;
         }
     }
@@ -103,9 +103,6 @@ function lookAt(split) {
     // something here or in a room or item is causing the pNum to go below
     // how do you look at something with a two-word name?
 
-    // *** TODO ***
-    // have case of two-word name
-    // be able to look at a Mod
     if (split.length==1) {
         current.look();
     }
@@ -140,7 +137,7 @@ function lookAt(split) {
         }
     }
     else if (split[1].toUpperCase() == "AT" && split.length == 4) {
-        if (isInRoom(split[2]) || isInInv(split[2])) {
+        if ((isInRoom(split[2]) && isInRoom(split[3])) || (isInInv(split[2]) && isInInv(split[3]))) {
             // for (var i = 0; i<current.items.length; i++) {
             //     if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
             //         current.items[i].lookAt();
@@ -178,17 +175,17 @@ function lookAt(split) {
     }
     else if (split[0].toUpperCase() == "READ" && split.length == 3) {
         for (var i = 0; i<current.items.length; i++) {
-            if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            if(current.items[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[2].toUpperCase())) {
                 current.items[i].lookAt();
             }
         }
         for (var i = 0; i<inventory.length; i++) {
-            if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            if(inventory[i].name.toUpperCase().includes(split[1].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[2].toUpperCase())) {
                 inventory[i].lookAt();
             }
         }
         for (var i = 0; i<current.mods.length; i++) {
-            if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+            if(current.mods[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[2].toUpperCase())) {
                 current.mods[i].lookAt();
             }
         }
@@ -198,8 +195,7 @@ function lookAt(split) {
     }
 }
 function go(direction) {
-  // add shorthand like gw or gn or ga or gf
-  // *** TODO *** check if the grue is there
+  // *** TO DO *** : check if the door is corroded
   var success=true;
   if (direction.length == 2 && direction.charAt(0).toUpperCase() == 'G') {
     if (direction.toUpperCase() == "GN") {
@@ -381,6 +377,28 @@ function textParse(split) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
     go(split[1]);
   }
+  else if (split.length == 2 && split[0].toUpperCase() == "TAKE" && split[1].toUpperCase() == "BLOOD") {
+    // this really should not be hard-coded
+    if (isInInv("flask")) {
+        fillFlask();
+    }
+    else {
+        display("I don't have anything to carry the blood in.");
+    }
+  }
+//   else if ((split.includes("POUR") || split.includes("CORRODE")) && split.includes("BLOOD")) {
+//     if (isInInv("flask with corrosive blood")) {
+//         if (split.includes("NORTH") && split.includes("DOOR")) {
+//             if (current.north != undefined && !(current.north.corroded)) {
+//                 current.north.corroded = true;
+//                 display("I corroded a cupboard-sized hole in the north door. ");
+//             }
+//         }
+//     }
+//     else {
+//         display("I can't do that with what I have on me.");
+//     }
+//   }
   else if (split[0].length == 2 && split[0].charAt(0).toUpperCase() == 'G'){
     go(split[0]);
   }
@@ -394,7 +412,12 @@ function textParse(split) {
         display("I already have that.");
     }
     else if (isInRoom(split[1])) {
-        take(itemInRoom(split[1]));
+        if (current.mods.includes(itemInRoom(split[1]))) {
+            display("That's not someting I can pick up and carry around with me.");
+        }
+        else {
+            take(itemInRoom(split[1]));
+        }
     }
     // case two-word name
     else {
@@ -427,7 +450,7 @@ function textParse(split) {
     // case if alien is in the room
     display("Talking to oneself is a stress coping mechanism; however, it's not the right one for me.");
   }
-  else if (split[0].toUpperCase() == "DROP" && split.length == 2) {
+  else if (split[0].toUpperCase() == "DROP" && split.length >= 2) {
     // remove the length condition
     // remove from inventory
     // display it was dropped
@@ -439,8 +462,6 @@ function textParse(split) {
         drop(itemInInv(split[1]));
     }
   }
-  // ** TO DO **
-  // else if (any of the items or mods have a key in their map that corresponds to split[0])
   else if (splitHasCommand(split)) {
     var command = findCommand(split);
     command(split);
@@ -460,6 +481,50 @@ function filter(split) {
     return split;
 }
 
+function moveCleaner() {
+    var availableRooms = [];
+    if (cleaner_monster_location.north != undefined && ((!(cleaner_monster_location.north.locked) && cleaner_monster_location.north.open) || cleaner_monster_location.north.corroded)) {
+        availableRooms.push(cleaner_monster_location.north);
+    }
+    if (cleaner_monster_location.east != undefined && ((!(cleaner_monster_location.east.locked) && cleaner_monster_location.east.open) || cleaner_monster_location.east.corroded)) {
+        availableRooms.push(cleaner_monster_location.east);
+    }
+    if (cleaner_monster_location.south != undefined && ((!(cleaner_monster_location.south.locked) && cleaner_monster_location.south.open) || cleaner_monster_location.south.corroded)) {
+        availableRooms.push(cleaner_monster_location.south);
+    }
+    if (cleaner_monster_location.west != undefined && ((!(cleaner_monster_location.west.locked) && cleaner_monster_location.west.open) || cleaner_monster_location.west.corroded)) {
+        availableRooms.push(cleaner_monster_location.west);
+    }
+    if (availableRooms.length > 0) {
+        var newRoom = availableRooms[Math.floor(Math.random() * availableRooms.length)];
+        // move there
+        cleaner_monster_location.mods.splice(cleaner_monster_location.mods.indexOf(cleaner_monster), 1);
+        cleaner_monster_location = newRoom;
+        cleaner_monster_location.mods.push(cleaner_monster);
+    }
+    else {
+        // do nothing
+    }
+    console.log(cleaner_monster_location.name);
+}
+
+function spotCleaner() {
+    if (current.name == "Main Hallway" && cleaner_monster_location.name == "Main Hallway") {
+        if (isInInv("scientist's log")) {
+            display("I see the cleaner monster scurrying about in the hallway.")
+        }
+        else {
+            display("I see a strange monster scurrying about in the hallway.");
+        }
+    }
+    else if (current == cleaner_monster_location) {
+        cleaner_monster.lookAt();
+    }
+    else {
+        // do nothing
+    }
+}
+
 function handleSubmit() {
   var form = document.getElementById("form");
   var div = document.getElementById("display_input");
@@ -469,7 +534,12 @@ function handleSubmit() {
   var split = value.split(" ");
   // also remove 'a' and 'the' from the array
   split = filter(split);
+  for (var i = 0; i < split.length; i++) {
+      split[i] = split[i].toUpperCase();
+  }
   textParse(split);
+  moveCleaner();
+  spotCleaner();
   // what if the user types an and?
   // maybe... and then no textParse in handleSubmit()
   // filter() {
@@ -499,3 +569,4 @@ input.addEventListener("keyup", function(event){
         }
     }
 });
+
