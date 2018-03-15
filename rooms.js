@@ -211,7 +211,7 @@ flask.use = fillFlask;
 flask.commands.set("FILL", fillFlask);
 
 
-var key = new Item("key", "The captain's access card.", "There's a key in the far corner.");
+var key = new Item("access card", "The captain's access card.", "There's an access card in the far corner.");
 function unlock(split) {
   // add split.includes("north") etc. to each condition
   if (split.length > 1) {

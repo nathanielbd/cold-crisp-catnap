@@ -196,6 +196,7 @@ function lookAt(split) {
 }
 function go(direction) {
   // *** TO DO *** : check if the door is corroded
+  // *** TO DO *** : check if the door is corroded and open
   var success=true;
   if (direction.length == 2 && direction.charAt(0).toUpperCase() == 'G') {
     if (direction.toUpperCase() == "GN") {
@@ -210,6 +211,13 @@ function go(direction) {
         else if (current.north.locked) {
             display("The door seems to be locked.");
             success=false;
+        }
+        else if (current.north.corroded && !(current.north.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.north.corroded && current.north.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
         }
         else {
             current=current.north;
@@ -228,6 +236,13 @@ function go(direction) {
             display("The door seems to be locked.");
             success=false;
         }
+        else if (current.east.corroded && !(current.east.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.east.corroded && current.east.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+        }
         else {
             current=current.east;
         }
@@ -245,6 +260,13 @@ function go(direction) {
             display("The door seems to be locked.");
             success=false;
         }
+        else if (current.south.corroded && !(current.south.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.south.corroded && current.south.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+        }
         else {
             current=current.south;
         }
@@ -261,6 +283,13 @@ function go(direction) {
         else if (current.west.locked) {
             display("The door seems to be locked.");
             success=false;
+        }
+        else if (current.west.corroded && !(current.west.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.west.corroded && current.west.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
         }
         else {
             current=current.west;
@@ -295,6 +324,13 @@ function go(direction) {
             display("The door seems to be locked.");
             success=false;
         }
+        else if (current.north.corroded && !(current.north.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.north.corroded && current.north.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+        }
         else {
             current=current.north;
         }
@@ -311,6 +347,13 @@ function go(direction) {
         else if (current.east.locked) {
             display("The door seems to be locked.");
             success=false;
+        }
+        else if (current.east.corroded && !(current.east.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.east.corroded && current.east.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
         }
         else {
             current=current.east;
@@ -329,6 +372,13 @@ function go(direction) {
             display("The door seems to be locked.");
             success=false;
         }
+        else if (current.south.corroded && !(current.south.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.south.corroded && current.south.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+        }
         else {
             current=current.south;
         }
@@ -345,6 +395,13 @@ function go(direction) {
         else if (current.west.locked) {
             display("The door seems to be locked.");
             success=false;
+        }
+        else if (current.west.corroded && !(current.west.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.west.corroded && current.west.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
         }
         else {
             current=current.west;
@@ -391,9 +448,42 @@ function textParse(split) {
 //         if (split.includes("NORTH") && split.includes("DOOR")) {
 //             if (current.north != undefined && !(current.north.corroded)) {
 //                 current.north.corroded = true;
-//                 display("I corroded a cupboard-sized hole in the north door. ");
+//                 display("I corroded a cupboard-sized hole in the north door.");
+//             }
+//             else {
+//                 display("I can't do that there");
 //             }
 //         }
+//         else if (split.includes("EAST") && split.includes("DOOR")) {
+//             if (current.east != undefined && !(current.east.corroded)) {
+//                 current.east.corroded = true;
+//                 display("I corroded a cupboard-sized hole in the east door.");
+//             }
+//             else {
+//                 display("I can't do that there");
+//             }
+//         }
+//         else if (split.includes("SOUTH") && split.includes("DOOR")) {
+//             if (current.south != undefined && !(current.south.corroded)) {
+//                 current.south.corroded = true;
+//                 display("I corroded a cupboard-sized hole in the south door.");
+//             }
+//             else {
+//                 display("I can't do that there");
+//             }
+//         }
+//         else if (split.includes("WEST") && split.includes("DOOR")) {
+//             if (current.west != undefined && !(current.west.corroded)) {
+//                 current.west.corroded = true;
+//                 display("I corroded a cupboard-sized hole in the west door.");
+//             }
+//             else {
+//                 display("I can't do that there");
+//             }
+//         }
+//         else {
+//             display("I don't know where to do that.");
+//         } 
 //     }
 //     else {
 //         display("I can't do that with what I have on me.");
@@ -501,11 +591,16 @@ function moveCleaner() {
         cleaner_monster_location.mods.splice(cleaner_monster_location.mods.indexOf(cleaner_monster), 1);
         cleaner_monster_location = newRoom;
         cleaner_monster_location.mods.push(cleaner_monster);
+        // case that the room it moves into was not open (blocked by mircoflora)
+        if (cleaner_monster_location.corroded && !(cleaner_monster_location.open)) {
+            cleaner_monster_location.open = true;
+            // TODO: do i need to do something here?
+        }
     }
     else {
         // do nothing
     }
-    console.log(cleaner_monster_location.name);
+    // console.log(cleaner_monster_location.name);
 }
 
 function spotCleaner() {
