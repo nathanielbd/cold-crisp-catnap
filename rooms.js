@@ -119,7 +119,7 @@ var Hall1 = new Room("South end of Main Hallway","A hallway stretches north and 
 var Hall2 = new Room("Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the west.");
 var Hall3 = new Room("Main Hallway","A hallway strtches north and south.\nThere are entrances to the west and east.");
 var Hall4 = new Room("North end of Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the north.");
-var Escape_pod = new Room("Escape Pod","An escape pod. The south window is blocked by an alien growth.\nThere is an exit to the west.");
+var Escape_pod = new Room("Escape Pod","An escape pod. The south window is blocked by an alien growth. It smells nasty in here. Must have been the ooze.\nThere is an exit to the west.");
 var Airlock = new Room("Airlock","The airlock of the vessel. There is a spacesuit contained within a glass chamber in the far corner;\nhowever, an identical chamber is shattered in the other corner.");
 var Bridge = new Room("Bridge","Write an actual description here. There is a single exit to the south.");
 var Engineering = new Room("Engineering","Write an actual description here. The siren is loudest here. There are exits to the north, west, and south.");
@@ -128,8 +128,9 @@ var Lab = new Room("Laboratory","I bet science goes on in here. The exit is to t
 var Cafe = new Room("Cafeteria","Food. Exits to the west and east.");
 var Sick_bay = new Room("Sick Bay","I feel nauseous just staying in here. There is a door to the north. Exit to the east.");
 var Computer_system = new Room("Computer Control Room","I think this controls the navigation and life support, among other things.");
-var Crew_quarters = new Room("Crew Quarters","I feel like I've had some nice conversations here. Entrances from the north and east.");
-var Your_quarters = new Room("Quarters","My home away from home. Exit south.");
+var Crew_quarters = new Room("Crew Quarters","I feel like I've had some nice conversations here. Entrances to the north and east.");
+var Your_quarters = new Room("Quarters","My home away from home. It smells nasty in here. Must have been the ooze. Exit south.");
+// ** TO DO ** there should be some secret item in your_quarters
   
 upDown(Bridge, Hall4);
 upDown(Computer_system, Sick_bay);
@@ -155,7 +156,7 @@ Airlock.locked = true;
 Bridge.locked = true;
 
 // update the poster desc
-var instrPoster = new Item("poster","The poster reads:<br><br>Welcome to CCC! Here are some of the recognized commands...<br>l or look; look at /something/; go /direction/; gn, ge, gs, gw;\ntake /something/; use /someting/; say /something/<br>There are others, so be creative!<br><br>Quite a strange poster I'd say...","A strange poster hangs on the wall.")
+var instrPoster = new Item("poster","The poster reads:<br><br>Welcome to CCC! Here are some of the recognized commands...<br>l or look; look at /something/; go /direction/; gn, ge, gs, gw; \ntake /something/; use /someting/; drop /something/; say /something/<br>There are others, so be creative!<br><br>Quite a strange poster I'd say...","A strange poster hangs on the wall.")
 var flashlight = new Item("flashlight","A perfectly normal flashlight.","A flashlight lies on the floor.");
 flashlight.use = function() {
   if (current == Cargo_bay) {
@@ -211,7 +212,7 @@ flask.use = fillFlask;
 flask.commands.set("FILL", fillFlask);
 
 
-var key = new Item("access card", "The captain's access card.", "There's an access card in the far corner.");
+var key = new Item("access card", "A crewman's access card for locking and unlocking rooms.", "There's an access card in the far corner.");
 function unlock(split) {
   // add split.includes("north") etc. to each condition
   if (split.length > 1) {
@@ -316,7 +317,7 @@ cleaner_monster.look = function() {
   // do nothing
 }
 cleaner_monster.lookAt = function() {
-  if (isInInv("scientist's log")) {
+  if (isInInv("scientist's log")) { // it should be whether you've read it, not if you have it
     display("The cleaner monster clumsily stumbles past you");
   }
   else {
@@ -324,8 +325,36 @@ cleaner_monster.lookAt = function() {
   }
 };
 
-// ** TO DO ** I need to make a captain's key that unlocks the other logs in the scientist's log
-// ** TO DO ** rename key to access card
+var captains_card = new Item("captain's card", "The captain's card. It can override locks on other crewmen's logs.", "The captain's card is clutched in the fist of its owner's body."); 
+// ** TODO ** should add a log to the card: log 82 uneventful, all tests passed. no news is good news. 
+function override(split) {
+  // "override lock on scientist's log" should work
+  for (var i=split.length -1; i>=0; i--) {
+    if (split[i].toUpperCase() == 'ON' || split[i].toUpperCase() == 'AT' || split[i].toUpperCase() == 'IN' || split[i].toUpperCase() == 'LOCK') {
+        split.splice(i, 1);
+    }
+  }
+  if (split.length == 3) {
+    if (split.includes("SCIENTIST'S") && split.includes("LOG")) {
+      scientists_log.desc = "I can see previously locked logs now.<br> <br> Log 83 <br> Microflora and microfauna on specimen are remarkably unique. Organelle membranes are not characteristically folded to maximize surface area. Have yet to see a limit on volume growth of culture. <br> <br> Log 84 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed.";
+      display("I've overridden the lock on the scientist's log.");
+    }
+    else {
+      display("I don't think I can override that.");
+    }
+  }
+  else { // split.length == 2
+    display("I don't think I can override that.");
+  }
+}
+captains_card.commands.set("OVERRIDE", override);
+// override function
+
+// ** TO DO ** update desc of rooms
+// ** TO DO ** there should a fuse
+// ** TO DO ** there should be options to go back go sleep and escape in a pod that are false options
+// ** TO DO ** have custodian's log have the player's name and the other logs have a made-up name
+//             custodian's log will have ...
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
@@ -333,6 +362,7 @@ Cafe.items.push(rations);
 Lab.items.push(flask);
 Lab.items.push(scientists_log);
 Crew_quarters.items.push(key);
+Bridge.items.push(captains_card);
 
 Lab.mods.push(mass_spec);
 Sleep_chamber.mods.push(body);

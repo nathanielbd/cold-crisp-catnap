@@ -137,26 +137,41 @@ function lookAt(split) {
         }
     }
     else if (split[1].toUpperCase() == "AT" && split.length == 4) {
-        if ((isInRoom(split[2]) && isInRoom(split[3])) || (isInInv(split[2]) && isInInv(split[3]))) {
-            // for (var i = 0; i<current.items.length; i++) {
-            //     if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
-            //         current.items[i].lookAt();
-            //     }
-            // }
-            // for (var i = 0; i<inventory.length; i++) {
-            //     if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
-            //         inventory[i].lookAt();
-            //     }
-            // }
-            // for (var i = 0; i<current.mods.length; i++) {
-            //     if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
-            //         current.mods[i].lookAt();
-            //     }
-            // }
-            itemInRoom(split[2]).lookAt();
+        // if ((isInRoom(split[2]) && isInRoom(split[3])) || (isInInv(split[2]) && isInInv(split[3]))) {
+        //     // for (var i = 0; i<current.items.length; i++) {
+        //     //     if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+        //     //         current.items[i].lookAt();
+        //     //     }
+        //     // }
+        //     // for (var i = 0; i<inventory.length; i++) {
+        //     //     if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+        //     //         inventory[i].lookAt();
+        //     //     }
+        //     // }
+        //     // for (var i = 0; i<current.mods.length; i++) {
+        //     //     if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+        //     //         current.mods[i].lookAt();
+        //     //     }
+        //     // }
+        //     itemInRoom(split[2]).lookAt();
+        // }
+        // else {
+        //     display("I can't see that.");
+        // }
+        for (var i = 0; i<current.items.length; i++) {
+            if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                current.items[i].lookAt();
+            }
         }
-        else {
-            display("I can't see that.");
+        for (var i = 0; i<inventory.length; i++) {
+            if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                inventory[i].lookAt();
+            }
+        }
+        for (var i = 0; i<current.mods.length; i++) {
+            if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                current.mods[i].lookAt();
+            }
         }
     }
     // else if there is something to look at that has a two-word name
@@ -217,7 +232,8 @@ function go(direction) {
             success=false;
         }
         else if (current.north.corroded && current.north.open) {
-            display("I'm able to crawl through the hole since the ooze is cleared.");
+            display("I'm able to crawl through the hole.");
+            current=current.north;
         }
         else {
             current=current.north;
@@ -242,6 +258,7 @@ function go(direction) {
         }
         else if (current.east.corroded && current.east.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.east;
         }
         else {
             current=current.east;
@@ -266,6 +283,7 @@ function go(direction) {
         }
         else if (current.south.corroded && current.south.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.south;
         }
         else {
             current=current.south;
@@ -290,6 +308,7 @@ function go(direction) {
         }
         else if (current.west.corroded && current.west.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.west;
         }
         else {
             current=current.west;
@@ -311,7 +330,7 @@ function go(direction) {
     }
   }
   else {
-    if (direction == "north" || direction == "fore") {
+    if (direction == "NORTH" || direction == "FORE") {
         if (current.north===undefined) {
             display("There's a wall there.");
             success=false;
@@ -330,12 +349,13 @@ function go(direction) {
         }
         else if (current.north.corroded && current.north.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.north;
         }
         else {
             current=current.north;
         }
     }
-    else if (direction == "east" || direction == "starboard") {
+    else if (direction == "EAST" || direction == "STARBOARD") {
         if (current.east===undefined) {
             display("There's a wall there.");
             success=false;
@@ -354,12 +374,13 @@ function go(direction) {
         }
         else if (current.east.corroded && current.east.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.east;
         }
         else {
             current=current.east;
         }
     }
-    else if (direction == "south" || direction == "aft") {
+    else if (direction == "SOUTH" || direction == "AFT") {
         if (current.south===undefined) {
             display("There's a wall there.");
             success=false;
@@ -378,12 +399,13 @@ function go(direction) {
         }
         else if (current.south.corroded && current.south.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.south;
         }
         else {
             current=current.south;
         }
     }
-    else if (direction == "west" || direction == "port") {
+    else if (direction == "WEST" || direction == "PORT") {
         if (current.west===undefined) {
             display("There's a wall there.");
             success=false;
@@ -402,16 +424,17 @@ function go(direction) {
         }
         else if (current.west.corroded && current.west.open) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.west;
         }
         else {
             current=current.west;
         }
     }
-    else if (direction == "up") {
+    else if (direction == "UP") {
       display("There is no way up");
       success=false;
     }
-    else if (direction == "down") {
+    else if (direction == "DOWN") {
       // grue reference?
       display("There is no way down.");
       success=false;
@@ -430,7 +453,10 @@ function textParse(split) {
     // instead of requiring with &&, write error messages like "where do i go?" or "what should i take?"
     // ** TODO **: hit, throw, look at <stuff that aren't items>, 
     // consider shorthands
-  if (split[0].toUpperCase() == "GO" && split.length == 2) {
+    if (split.length == 0) {
+        display("I'm not sure what that means.");
+    }
+  else if (split[0].toUpperCase() == "GO" && split.length == 2) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
     go(split[1]);
   }
@@ -443,52 +469,52 @@ function textParse(split) {
         display("I don't have anything to carry the blood in.");
     }
   }
-//   else if ((split.includes("POUR") || split.includes("CORRODE")) && split.includes("BLOOD")) {
-//     if (isInInv("flask with corrosive blood")) {
-//         if (split.includes("NORTH") && split.includes("DOOR")) {
-//             if (current.north != undefined && !(current.north.corroded)) {
-//                 current.north.corroded = true;
-//                 display("I corroded a cupboard-sized hole in the north door.");
-//             }
-//             else {
-//                 display("I can't do that there");
-//             }
-//         }
-//         else if (split.includes("EAST") && split.includes("DOOR")) {
-//             if (current.east != undefined && !(current.east.corroded)) {
-//                 current.east.corroded = true;
-//                 display("I corroded a cupboard-sized hole in the east door.");
-//             }
-//             else {
-//                 display("I can't do that there");
-//             }
-//         }
-//         else if (split.includes("SOUTH") && split.includes("DOOR")) {
-//             if (current.south != undefined && !(current.south.corroded)) {
-//                 current.south.corroded = true;
-//                 display("I corroded a cupboard-sized hole in the south door.");
-//             }
-//             else {
-//                 display("I can't do that there");
-//             }
-//         }
-//         else if (split.includes("WEST") && split.includes("DOOR")) {
-//             if (current.west != undefined && !(current.west.corroded)) {
-//                 current.west.corroded = true;
-//                 display("I corroded a cupboard-sized hole in the west door.");
-//             }
-//             else {
-//                 display("I can't do that there");
-//             }
-//         }
-//         else {
-//             display("I don't know where to do that.");
-//         } 
-//     }
-//     else {
-//         display("I can't do that with what I have on me.");
-//     }
-//   }
+  else if ((split.includes("POUR") && split.includes("BLOOD")) || split.includes("CORRODE")) {
+    if (isInInv("flask with corrosive blood")) {
+        if (split.includes("NORTH") && split.includes("DOOR")) {
+            if (current.north != undefined && !(current.north.corroded)) {
+                current.north.corroded = true;
+                display("I corroded a cupboard-sized hole in the north door.");
+            }
+            else {
+                display("I can't do that there");
+            }
+        }
+        else if (split.includes("EAST") && split.includes("DOOR")) {
+            if (current.east != undefined && !(current.east.corroded)) {
+                current.east.corroded = true;
+                display("I corroded a cupboard-sized hole in the east door.");
+            }
+            else {
+                display("I can't do that there");
+            }
+        }
+        else if (split.includes("SOUTH") && split.includes("DOOR")) {
+            if (current.south != undefined && !(current.south.corroded)) {
+                current.south.corroded = true;
+                display("I corroded a cupboard-sized hole in the south door.");
+            }
+            else {
+                display("I can't do that there");
+            }
+        }
+        else if (split.includes("WEST") && split.includes("DOOR")) {
+            if (current.west != undefined && !(current.west.corroded)) {
+                current.west.corroded = true;
+                display("I corroded a cupboard-sized hole in the west door.");
+            }
+            else {
+                display("I can't do that there");
+            }
+        }
+        else {
+            display("I don't know where to do that.");
+        } 
+    }
+    else {
+        display("I can't do that with what I have on me.");
+    }
+  }
   else if (split[0].length == 2 && split[0].charAt(0).toUpperCase() == 'G'){
     go(split[0]);
   }
@@ -563,7 +589,7 @@ function textParse(split) {
 
 function filter(split) {
     // add functionality for if the user types two commands separated by 'and'
-    for (var i=0; i<split.length; i++) {
+    for (var i= split.length-1; i>=0; i--) {
         if (split[i].toUpperCase() == 'A' || split[i].toUpperCase() == 'AN' || split[i].toUpperCase() == 'THE') {
             split.splice(i, 1);
         }
@@ -635,6 +661,7 @@ function handleSubmit() {
   textParse(split);
   moveCleaner();
   spotCleaner();
+  console.log(split);
   // what if the user types an and?
   // maybe... and then no textParse in handleSubmit()
   // filter() {
