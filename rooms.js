@@ -119,17 +119,20 @@ var Hall1 = new Room("South end of Main Hallway","A hallway stretches north and 
 var Hall2 = new Room("Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the west.");
 var Hall3 = new Room("Main Hallway","A hallway strtches north and south.\nThere are entrances to the west and east.");
 var Hall4 = new Room("North end of Main Hallway","A hallway stretches north and south.\nThere is a single entrance to the north.");
-var Escape_pod = new Room("Escape Pod","An escape pod. The south window is blocked by an alien growth. It smells nasty in here. Must have been the ooze.\nThere is an exit to the west.");
+var Escape_pod = new Room("Escape Pod","An escape pod. The south window is blocked by an alien growth. It smells nasty in here. Must have been the ooze. The pod seems to have been severely damaged by it. No escape for me now.\nThere is an exit to the west.");
 var Airlock = new Room("Airlock","The airlock of the vessel. There is a spacesuit contained within a glass chamber in the far corner;\nhowever, an identical chamber is shattered in the other corner.");
-var Bridge = new Room("Bridge","Write an actual description here. There is a single exit to the south.");
-var Engineering = new Room("Engineering","Write an actual description here. The siren is loudest here. There are exits to the north, west, and south.");
+var Bridge = new Room("Bridge","The captain lies dead with a head wound. There is a single exit to the south.");
+var Engineering = new Room("Engineering","The siren is loudest here. I'm not familiar with any of the tools in the room. There are exits to the north, west, and south.");
 var Cargo_bay = new Room("Cargo Bay","It is pitch black. I hope I am not eaten by a grue.");
 var Lab = new Room("Laboratory","I bet science goes on in here. The exit is to the east.");
 var Cafe = new Room("Cafeteria","Food. Exits to the west and east.");
 var Sick_bay = new Room("Sick Bay","I feel nauseous just staying in here. There is a door to the north. Exit to the east.");
 var Computer_system = new Room("Computer Control Room","I think this controls the navigation and life support, among other things.");
 var Crew_quarters = new Room("Crew Quarters","I feel like I've had some nice conversations here. Entrances to the north and east.");
-var Your_quarters = new Room("Quarters","My home away from home. It smells nasty in here. Must have been the ooze. Exit south.");
+var Your_quarters = new Room("Quarters","The quarters that was previously blocked by the ooze. It smells nasty in here. Must have been the ooze. Exit south.");
+
+// var outer_space = new Room("Outer Space", "Thousands of stars dot the sky. My tether is just long enough to reach the vents for the computer system, the alien growth around the escape pod, and /red herring/");
+// ** TO DO ** still need to make mods of all the things mentioned in the rooms
 // ** TO DO ** there should be some secret item in your_quarters
   
 upDown(Bridge, Hall4);
@@ -308,7 +311,7 @@ function analyze(split) {
 }
 mass_spec.commands.set("ANALYZE", analyze);
 
-var scientists_log = new Item("scientist's log", "I can access the most recent log, but the others are locked. <br> <br> Log 84 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed. <br> <br> I guess we have a cleaner monster on our hands.", "The scientist's log lies face-down.");
+var scientists_log = new Item("scientist's log", "I can access the most recent log, but the others are locked. <br> <br> Log 84, Stardate 2039.1 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed. <br> <br> I guess we have a cleaner monster on our hands.", "The scientist's log lies face-down.");
 
 var body = new Mod("body", "An alien body. It seems to have died recently from a wound.", "");
 var blood = new Mod("blood", "Some green nasty-looking alien blood.", "");
@@ -325,6 +328,8 @@ cleaner_monster.lookAt = function() {
   }
 };
 
+var fuse = new Item("broken fuse", "A cyrogenic sleep pod fuse. It's broken. Seems to have been crushed by something or someone.", "I can see a fuse on a high shelf.");
+
 var captains_card = new Item("captain's card", "The captain's card. It can override locks on other crewmen's logs.", "The captain's card is clutched in the fist of its owner's body."); 
 // ** TODO ** should add a log to the card: log 82 uneventful, all tests passed. no news is good news. 
 function override(split) {
@@ -336,25 +341,85 @@ function override(split) {
   }
   if (split.length == 3) {
     if (split.includes("SCIENTIST'S") && split.includes("LOG")) {
-      scientists_log.desc = "I can see previously locked logs now.<br> <br> Log 83 <br> Microflora and microfauna on specimen are remarkably unique. Organelle membranes are not characteristically folded to maximize surface area. Have yet to see a limit on volume growth of culture. <br> <br> Log 84 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed.";
+      scientists_log.desc = "I can see previously locked logs now.<br> <br> Log 83, Stardate 2038.9 <br> Microflora and microfauna on specimen are remarkably unique. Organelle membranes are not characteristically folded to maximize surface area. Have yet to see a limit on volume growth of culture. <br> <br> Log 84, Stardate 2039.1 <br> Specimen looks to be blind and deaf. No response to any stimuli other than touch. It constantly brushes the floor with its mouth. Could feed on micro-flora and -fauna, but further research is needed.";
       display("I've overridden the lock on the scientist's log.");
+    }
+    else if (split.includes("LIEUTENANT'S") && split.includes("LOG")) {
+      lieutenants_log.desc = "I can now see the log that was previously locked. <br><br> Log 22, Stardate 2044.1 <br><br> Frobozzian government did not comply with SEC annexation. Executed appropriate protocol to diffuse the situation. Frobozz now a dependency of West Shanbar confederation. Conscription and SEC operations already underway, despite continued hostility from the natives. <br><br> Log 23, Stardate 2044.2 <br><br> Some of the ship got covered in grue-spit. Impossible we scrubbed it all. Hopefully it doesn't compromise any functions. There's much more important things to tend do, especially with the Frobozzians.";
+      // how to make SEC as fascist as possible?
+      display("I've overridden the lock on the lieutenant's log.");
     }
     else {
       display("I don't think I can override that.");
     }
   }
-  else { // split.length == 2
+  else { 
     display("I don't think I can override that.");
   }
 }
 captains_card.commands.set("OVERRIDE", override);
 // override function
 
-// ** TO DO ** update desc of rooms
-// ** TO DO ** there should a fuse
-// ** TO DO ** there should be options to go back go sleep and escape in a pod that are false options
-// ** TO DO ** have custodian's log have the player's name and the other logs have a made-up name
-//             custodian's log will have ...
+var siren = new Mod("siren" , "", "");
+function turnOnOrOff(split) {
+  if(split.includes("ON")) {
+    // change desc of engineering
+    Engineering.desc = "The siren is loudest here. I'm not familiar with any of the tools in the room. There are exits to the north, west, and south.";
+    display("I turned on the siren.");
+  }
+  else if(split.includes("OFF")) {
+    // change desc of engineering
+    Engineering.desc = "I'm not familiar with any of the tools in the room. There are exits to the north, west, and south.";
+    display("I turned off the siren.");
+  }
+  else {
+    display("I don't understand whether I should turn on or turn off.");
+  }
+}
+siren.commands.set("TURN", turnOnOrOff);
+
+var lieutenants_log = new Item("lieutenant's log", "There's a previous log that is locked. <br><br> Log 23, Stardate 2044.2 <br><br> Some of the ship got covered in grue-spit. Impossible we scrubbed it all. Hopefully it doesn't compromise any functions. There's much more important things to tend do, especially with the Frobozzians.", "I can see a small card fallen close to the desk. It's the lieutenant's log.");
+
+var whammoprin = new Item("whammoprin", "Just one of these will stop that pounding headache. Whammoprin. Give it a whack!", "There's some whammoprin on the floor. That would go well with my pounding headache.");
+whammoprin.use = function() {
+  display("I don't feel a thing! The headache's completely gone.");
+  var itemList = document.getElementById("itemList");
+  var itemStub = document.getElementById("whammoprin");
+  itemStub.parentNode.removeChild(itemStub);
+  inventory.splice(inventory.indexOf(whammoprin), 1);
+}
+
+var mirror = new Mod("mirror", "I see a remarkably handsome man looking back at me. I like to think I look like Chris Pratt.", "There's a hinged mirror on the wall.");
+var markings = new Mod("markings", "The markings translate to English as \"this space intentionally left blank\"", "Behind the mirror are some markings in an alien language, probably left there during construction of the ship.");
+function openMirror(split) {
+  display("Opened the mirror.");
+  if (!isInRoom("markings")) {
+    Crew_quarters.mods.push(markings);
+  }
+  markings.look();
+}
+function closeMirror(split) {
+  display("Closed the mirror.");
+  if (isInRoom("markings")) {
+    Crew_quarters.mods.splice(Crew_quarters.mods.indexOf(markings), 1);
+  }
+}
+mirror.commands.set("OPEN", openMirror);
+mirror.commands.set("CLOSE", closeMirror);
+
+// ** TO DO ** lieutenant's log, when unlocked with captain's key reveals evil, fascist nature of the SEC
+//             new objective: destroy the Delano
+//             how to destroy it? explosives?
+//             destroy with acid through sprinklers
+//             what to do to incentivise spacewalk?
+//             -must cool down vent from outside for overheating computer system
+//             69,105 stars in the sky
+//             
+// ** TO DO ** what is outside the vessel?
+//             spacewalk outside or kamikaze to sabotage SEC will reveal simulation/game/training exercise
+// ** TO DO ** make mods of anything mentioned in room desc
+// ** TO DO ** add functionality of computer system
+// ** TO DO ** add equipment to airlock
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
@@ -363,11 +428,16 @@ Lab.items.push(flask);
 Lab.items.push(scientists_log);
 Crew_quarters.items.push(key);
 Bridge.items.push(captains_card);
+Engineering.items.push(fuse);
+Your_quarters.items.push(lieutenants_log);
+Sick_bay.items.push(whammoprin);
 
 Lab.mods.push(mass_spec);
 Sleep_chamber.mods.push(body);
 Sleep_chamber.mods.push(blood);
 Engineering.mods.push(cleaner_monster);
+Engineering.mods.push(siren);
+Crew_quarters.mods.push(mirror);
 var cleaner_monster_location = Engineering;
 
   // adjust open boolean

@@ -1,3 +1,4 @@
+// ** TO DO ** remove right-hand inventory sidebar and replace it with the "inventory" and "i" commands
 var inventory = [];
 function itemInInv(itemName) {
     for (var i=0; i<inventory.length; i++) {
@@ -100,6 +101,7 @@ function drop(item) {
     inventory.splice(inventory.indexOf(item), 1);
 }
 function lookAt(split) {
+    // ** TO DO ** if the look fails, display an error message
     // something here or in a room or item is causing the pNum to go below
     // how do you look at something with a two-word name?
 
@@ -185,6 +187,11 @@ function lookAt(split) {
         for(var j=0;j<inventory.length;j++){
             if(split[1].toUpperCase() == inventory[j].name.toUpperCase()) {
                 inventory[j].lookAt();
+            }
+        }
+        for (var k=0; k<current.mods.length; k++) {
+            if(split[1].toUpperCase() == current.mods[k].name.toUpperCase()) {
+                current.mods[k].lookAt();
             }
         }
     }
@@ -661,7 +668,6 @@ function handleSubmit() {
   textParse(split);
   moveCleaner();
   spotCleaner();
-  console.log(split);
   // what if the user types an and?
   // maybe... and then no textParse in handleSubmit()
   // filter() {
@@ -669,7 +675,7 @@ function handleSubmit() {
         // split.split(" and ")
         // for (all of the indexes in the 'and' split) 
             // textParse(split[j]); 
-  while (pNum>9) {
+  while (pNum>7) {
     var first = div.firstChild;
     div.removeChild(first);
     pNum--;
@@ -683,7 +689,7 @@ input.addEventListener("keyup", function(event){
     if (event.keyCode == 13) {
         handleSubmit();
         input.value="";
-        while (pNum>9) {
+        while (pNum>7) {
             var div = document.getElementById("display_input");
             var first = div.firstChild;
             div.removeChild(first);
@@ -692,3 +698,8 @@ input.addEventListener("keyup", function(event){
     }
 });
 
+// ** TO DO ** add synonyms 
+//             examine
+// ** TO DO ** add functionality for classic zork i commands
+//             n, s, e, w, u, d, i
+//             add the joke commands like throw /thing/ at self, etc.

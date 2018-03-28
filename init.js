@@ -2,6 +2,8 @@ window.onbeforeunload = function(event) {
   return confirm("Do you really wanna refresh? You'd lose all your progress.");
 };
 
+console.log("Noble wizards do not mess with the console...");
+
 var pNum = 0;
 
 function display(text) {
