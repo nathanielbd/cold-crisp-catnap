@@ -1,4 +1,4 @@
-// ** TO DO ** remove right-hand inventory sidebar and replace it with the "inventory" and "i" commands
+// ** TO DO ** update the poster
 var inventory = [];
 function itemInInv(itemName) {
     for (var i=0; i<inventory.length; i++) {
@@ -24,16 +24,16 @@ function itemInRoom(itemName) {
 }
 function take(item) {
     // consider takeable boolean
-    var inventoryTitle = document.getElementById("inventoryTitle");
-    var itemList = document.getElementById("itemList");
-    if (inventory.length==0) {
-      inventoryTitle.innerHTML="Inventory";
-    }
+    // var inventoryTitle = document.getElementById("inventoryTitle");
+    // var itemList = document.getElementById("itemList");
+    // if (inventory.length==0) {
+    //   inventoryTitle.innerHTML="Inventory";
+    // }
     inventory.push(item);
-    var itemStub = document.createElement("li");
-    itemStub.innerHTML = item.name;
-    itemStub.setAttribute("id", item.name);
-    itemList.appendChild(itemStub);
+    // var itemStub = document.createElement("li");
+    // itemStub.innerHTML = item.name;
+    // itemStub.setAttribute("id", item.name);
+    // itemList.appendChild(itemStub);
     display("Took "+item.name+".");
     document.getElementById("form").reset();
     if (!(item.name.toUpperCase() === "RATIONS") || !(current == Cafe)) {
@@ -85,8 +85,8 @@ function isInInv(nameInSplit) {
     return inInv;
 }
 function drop(item) {
-    var itemList = document.getElementById("itemList");
-    var itemStub = document.getElementById(item.name);
+    // var itemList = document.getElementById("itemList");
+    // var itemStub = document.getElementById(item.name);
     display("Dropped "+item.name+".");
     var present = false;
     for (var i=0; i<current.items.length; i++){
@@ -97,7 +97,7 @@ function drop(item) {
     if (!present) {
         current.items.push(item);
     }
-    itemStub.parentNode.removeChild(itemStub);
+    // itemStub.parentNode.removeChild(itemStub);
     inventory.splice(inventory.indexOf(item), 1);
 }
 function lookAt(split) {
@@ -456,12 +456,33 @@ function go(direction) {
     current.look();
   }
 }
+
+function listInventory() {
+    display("I am carrying:");
+    var string = "";
+    for(var i = 0; i<inventory.length; i++) {
+        if (i == 0) {
+            string += inventory[i].name;
+        }
+        else {
+            string += "<br>" + inventory[i].name;
+        }
+    }
+    if (inventory.length == 0) {
+        string += "nothing";
+    }
+    display(string);
+}
+
 function textParse(split) {
     // instead of requiring with &&, write error messages like "where do i go?" or "what should i take?"
     // ** TODO **: hit, throw, look at <stuff that aren't items>, 
     // consider shorthands
     if (split.length == 0) {
         display("I'm not sure what that means.");
+    }
+    else if (split.includes("INVENTORY") || (split.length == 1 && split[0] == "I")) {
+        listInventory();
     }
   else if (split[0].toUpperCase() == "GO" && split.length == 2) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
@@ -675,7 +696,7 @@ function handleSubmit() {
         // split.split(" and ")
         // for (all of the indexes in the 'and' split) 
             // textParse(split[j]); 
-  while (pNum>7) {
+  while (pNum>8) {
     var first = div.firstChild;
     div.removeChild(first);
     pNum--;
@@ -689,7 +710,7 @@ input.addEventListener("keyup", function(event){
     if (event.keyCode == 13) {
         handleSubmit();
         input.value="";
-        while (pNum>7) {
+        while (pNum>8) {
             var div = document.getElementById("display_input");
             var first = div.firstChild;
             div.removeChild(first);

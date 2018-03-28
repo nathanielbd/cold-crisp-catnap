@@ -199,12 +199,12 @@ function fillFlask() {
     flask.name = "flask with blood";
     flask.desc = "A lab flask filled with blood";
     flask.init = "A blood-filled flask lies on the floor.";
-    var itemList = document.getElementById("itemList");
-    var itemStub = document.createElement("li");
-    var prev = document.getElementById("flask");
-    itemStub.innerHTML = flask.name;
-    itemStub.setAttribute("id", flask.name);
-    itemList.replaceChild(itemStub, prev);
+    // var itemList = document.getElementById("itemList");
+    // var itemStub = document.createElement("li");
+    // var prev = document.getElementById("flask");
+    // itemStub.innerHTML = flask.name;
+    // itemStub.setAttribute("id", flask.name);
+    // itemList.replaceChild(itemStub, prev);
     display("Took blood.");
   }
   else {
@@ -287,12 +287,12 @@ function displayAcidMessage() {
   flask.name = "flask with corrosive blood";
   flask.desc = "A lab flask filled with corrosive blood";
   flask.init = "A blood-filled flask lies on the floor.";
-  var itemList = document.getElementById("itemList");
-  var itemStub = document.createElement("li");
-  var prev = document.getElementById("flask with blood");
-  itemStub.innerHTML = flask.name;
-  itemStub.setAttribute("id", flask.name);
-  itemList.replaceChild(itemStub, prev);
+  // var itemList = document.getElementById("itemList");
+  // var itemStub = document.createElement("li");
+  // var prev = document.getElementById("flask with blood");
+  // itemStub.innerHTML = flask.name;
+  // itemStub.setAttribute("id", flask.name);
+  // itemList.replaceChild(itemStub, prev);
 }
 function analyze(split) {
   // use split.includes(); for blood or if it includes flask, also check if it has blood
@@ -383,9 +383,9 @@ var lieutenants_log = new Item("lieutenant's log", "There's a previous log that 
 var whammoprin = new Item("whammoprin", "Just one of these will stop that pounding headache. Whammoprin. Give it a whack!", "There's some whammoprin on the floor. That would go well with my pounding headache.");
 whammoprin.use = function() {
   display("I don't feel a thing! The headache's completely gone.");
-  var itemList = document.getElementById("itemList");
-  var itemStub = document.getElementById("whammoprin");
-  itemStub.parentNode.removeChild(itemStub);
+  // var itemList = document.getElementById("itemList");
+  // var itemStub = document.getElementById("whammoprin");
+  // itemStub.parentNode.removeChild(itemStub);
   inventory.splice(inventory.indexOf(whammoprin), 1);
 }
 
