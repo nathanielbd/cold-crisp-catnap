@@ -78,6 +78,8 @@ function Room(name, desc){
     this.east = undefined;
     this.south = undefined;
     this.west = undefined;
+    // this.up = undefined;
+    // this.down = undefined;
     this.items = [];
     this.mods = [];
     this.name = name;
@@ -131,7 +133,7 @@ var Computer_system = new Room("Computer Control Room","I think this controls th
 var Crew_quarters = new Room("Crew Quarters","I feel like I've had some nice conversations here. Entrances to the north and east.");
 var Your_quarters = new Room("Quarters","The quarters that was previously blocked by the ooze. It smells nasty in here. Must have been the ooze. Exit south.");
 
-// var outer_space = new Room("Outer Space", "Thousands of stars dot the sky. My tether is just long enough to reach the vents for the computer system, the alien growth around the escape pod, and /red herring/");
+var Outer_space = new Room("Outer Space", "Thousands of stars dot the sky. My tether is just long enough to reach the vent for the computer system, the alien growth around the escape pod, and the tractor beam.");
 // ** TO DO ** still need to make mods of all the things mentioned in the rooms
 // ** TO DO ** there should be some secret item in your_quarters
   
@@ -159,12 +161,12 @@ Airlock.locked = true;
 Bridge.locked = true;
 
 // update the poster desc
-var instrPoster = new Item("poster","The poster reads:<br><br>Welcome to CCC! Here are some of the recognized commands...<br>l or look; look at /something/; go /direction/; gn, ge, gs, gw; \ntake /something/; use /someting/; drop /something/; say /something/<br>There are others, so be creative!<br><br>Quite a strange poster I'd say...","A strange poster hangs on the wall.")
+var instrPoster = new Item("poster","The poster reads:<br><br>Welcome to CCC! Here are some of the recognized commands...<br>l or look; look at /something/; go /direction/; gn, ge, gs, gw; inventory or i; \ntake /something/; use /someting/; drop /something/; say /something/<br>There are others, so be creative!<br><br>Quite a strange poster I'd say...","A strange poster hangs on the wall.")
 var flashlight = new Item("flashlight","A perfectly normal flashlight.","A flashlight lies on the floor.");
 flashlight.use = function() {
   if (current == Cargo_bay) {
     // light up the room and reveal some more items
-    Cargo_bay.desc = "Below a spiral of steel stairs and amid  the maze of cargo rests a monstruous grue. I think it just blinked at me.";
+    Cargo_bay.desc = "Below a spiral of steel stairs and amid the maze of cargo rests a monstruous grue. I think it just blinked at me.";
     Cargo_bay.look();
   }
   else {
@@ -346,7 +348,9 @@ function override(split) {
     }
     else if (split.includes("LIEUTENANT'S") && split.includes("LOG")) {
       lieutenants_log.desc = "I can now see the log that was previously locked. <br><br> Log 22, Stardate 2044.1 <br><br> Frobozzian government did not comply with SEC annexation. Executed appropriate protocol to diffuse the situation. Frobozz now a dependency of West Shanbar confederation. Conscription and SEC operations already underway, despite continued hostility from the natives. <br><br> Log 23, Stardate 2044.2 <br><br> Some of the ship got covered in grue-spit. Impossible we scrubbed it all. Hopefully it doesn't compromise any functions. There's much more important things to tend do, especially with the Frobozzians.";
-      // how to make SEC as fascist as possible?
+      // ** TO DO ** instead make the unlocked log be a manifesto against SEC obviously written by a mentally disturbed person
+      // killer is a radical Frobozzian nationalist
+      // "Long has the Frobozzian nation been oppressed by the SEC. Forced annexation, conscription, transforming our economy into just another gear in the war machine. This ends now. The Cataclyst Device will be mine, in the rightful hands of the Frobozzians who will be united once again!"
       display("I've overridden the lock on the lieutenant's log.");
     }
     else {
@@ -389,28 +393,85 @@ whammoprin.use = function() {
   inventory.splice(inventory.indexOf(whammoprin), 1);
 }
 
+// to do spacesuit
+var wearingSpacesuit = false;
+var spacesuit = new Mod("spacesuit","An out-of-date spacesuit. All I'd need is an ancient 2008 Tesla Roadster and I'd look like Starman.","A tether connects the spacesuit to the outerdoor.");
+function wear(split) {
+  if (!wearingSpacesuit) {
+    wearingSpacesuit = true;
+    display("I'm now wearing the spacesuit.");
+  }
+  else {
+    display("I'm already wearing the spacesuit.");
+  }
+}
+function takeOff(split) {
+  if (wearingSpacesuit) {
+    wearingSpacesuit = false;
+    display("I took off the spacesuit.");
+  }
+  else {
+    display("I'm already out of the spacesuit.");
+  }
+}
+spacesuit.commands.set("WEAR", wear);
+spacesuit.commands.set("OFF", takeOff);
+
 var mirror = new Mod("mirror", "I see a remarkably handsome man looking back at me. I like to think I look like Chris Pratt.", "There's a hinged mirror on the wall.");
 var markings = new Mod("markings", "The markings translate to English as \"this space intentionally left blank\"", "Behind the mirror are some markings in an alien language, probably left there during construction of the ship.");
 function openMirror(split) {
-  display("Opened the mirror.");
-  if (!isInRoom("markings")) {
+  if (!isInRoom("markings")) {    
+    display("Opened the mirror.");
     Crew_quarters.mods.push(markings);
+    markings.look();
   }
-  markings.look();
+  else {
+    display("The mirror is already open.");
+  }
 }
 function closeMirror(split) {
-  display("Closed the mirror.");
   if (isInRoom("markings")) {
+    display("Closed the mirror.");
     Crew_quarters.mods.splice(Crew_quarters.mods.indexOf(markings), 1);
+  }
+  else {
+    display("The mirror is already closed.");
   }
 }
 mirror.commands.set("OPEN", openMirror);
 mirror.commands.set("CLOSE", closeMirror);
 
+// To do -- these
+var ventIsOpen = false;
+var vent = new Mod("vent","The vent that lets out heat from the central computer sytem. It's currently closed.","The vent is closed.");
+function openVent(split) {
+  vent.desc = "The vent that lets out heat from the central computer sytem. It's currently open.";
+  vent.init = "The vent is open. A sparse cone of steam escapes."
+  ventIsOpen = true;
+  display("Opened vent");
+}
+function closeVent(split) {
+  vent.desc = "The vent that lets out heat from the central computer sytem. It's currently closed."
+  vent.init = "The vent is closed."
+  ventIsOpen = false;
+  display("Closed vent.");
+}
+vent.commands.set("OPEN", openVent);
+vent.commands.set("CLOSE", closeVent);
+
+var alien_groth = new Mod("alien growth","A strange ooze of microflora we must not have detected. It seems to be growing and pulsing periodically.","");
+var tractor_beam = new Mod("tractor beam","A standard SEC tractor beam.","");
+var stars = new Mod("stars", "There are 69,105 twinkling stars in the sky.", "")
+function countStars() {
+  stars.lookAt();
+}
+stars.commands.set("COUNT", countStars);
+
 // ** TO DO ** lieutenant's log, when unlocked with captain's key reveals evil, fascist nature of the SEC
 //             new objective: destroy the Delano
 //             how to destroy it? explosives?
-//             destroy with acid through sprinklers
+//             destroy with acid through sprinklers (must be manual with captain's card -override safety protocol)
+//            
 //             what to do to incentivise spacewalk?
 //             -must cool down vent from outside for overheating computer system
 //             69,105 stars in the sky
@@ -420,6 +481,15 @@ mirror.commands.set("CLOSE", closeMirror);
 // ** TO DO ** make mods of anything mentioned in room desc
 // ** TO DO ** add functionality of computer system
 // ** TO DO ** add equipment to airlock
+// ** TO DO ** make spacesuit a mod and make you unable to go into the hallway with it.
+
+// ** TO DO ** who killed the people on the ship? are you the killer? how does the player decide to kamikaze?
+//             killer (has manifesto against fascist SEC who purges his homeworld) was traitor, needs to steal 
+//             valuable cargo that could be enormously destructive in the wrong hands, steals the wrong stuff,
+//             you need to destroy it with acid showers.  
+//             ^^^ THIS IS THE RIGHT PLOT TO GO WITH ^^^
+
+// ** TO DO ** be able to go down the stairs into the cargo bay
 
 Sleep_chamber.items.push(instrPoster);
 Sick_bay.items.push(flashlight);
@@ -438,6 +508,10 @@ Sleep_chamber.mods.push(blood);
 Engineering.mods.push(cleaner_monster);
 Engineering.mods.push(siren);
 Crew_quarters.mods.push(mirror);
+Airlock.mods.push(spacesuit);
+Outer_space.mods.push(vent);
+Outer_space.mods.push(alien_groth);
+Outer_space.mods.push(tractor_beam);
 var cleaner_monster_location = Engineering;
 
   // adjust open boolean

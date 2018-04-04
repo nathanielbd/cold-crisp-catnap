@@ -1,4 +1,4 @@
-// ** TO DO ** update the poster
+
 var inventory = [];
 function itemInInv(itemName) {
     for (var i=0; i<inventory.length; i++) {
@@ -97,14 +97,11 @@ function drop(item) {
     if (!present) {
         current.items.push(item);
     }
+    item.init = "The" + item.name + "is on the floor.";
     // itemStub.parentNode.removeChild(itemStub);
     inventory.splice(inventory.indexOf(item), 1);
 }
 function lookAt(split) {
-    // ** TO DO ** if the look fails, display an error message
-    // something here or in a room or item is causing the pNum to go below
-    // how do you look at something with a two-word name?
-
     if (split.length==1) {
         current.look();
     }
@@ -117,21 +114,28 @@ function lookAt(split) {
         // look at itemInRoom(split[2])
         // or if two-word name
         if (isInRoom(split[2]) || isInInv(split[2])) {
+            var success = false;
             for(var i=0;i<current.items.length;i++){
                 if(split[2].toUpperCase() == current.items[i].name.toUpperCase()){
                     // look at the item
+                    success = true;
                     current.items[i].lookAt();
                 }
             }
             for(var j=0;j<inventory.length;j++){
                 if(split[2].toUpperCase() == inventory[j].name.toUpperCase()){
+                    success = true;
                     inventory[j].lookAt();
                 }
             }
             for(var k = 0; k<current.mods.length; k++) {
                 if(split[2].toUpperCase() == current.mods[k].name.toUpperCase()) {
+                    success = true;
                     current.mods[k].lookAt();
                 }
+            }
+            if (!success) {
+                display("I can't see that");
             }
         }
         else {
@@ -160,56 +164,126 @@ function lookAt(split) {
         // else {
         //     display("I can't see that.");
         // }
+        var success = false;
         for (var i = 0; i<current.items.length; i++) {
             if(current.items[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                success = true;
                 current.items[i].lookAt();
             }
         }
         for (var i = 0; i<inventory.length; i++) {
             if(inventory[i].name.toUpperCase().includes(split[2].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                success = true;
                 inventory[i].lookAt();
             }
         }
         for (var i = 0; i<current.mods.length; i++) {
             if(current.mods[i].name.toUpperCase().includes(split[2].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[3].toUpperCase())) {
+                success = true;
                 current.mods[i].lookAt();
             }
+        }
+        if (!success) {
+            display("I can't see that.");
         }
     }
     // else if there is something to look at that has a two-word name
     else if (split[0].toUpperCase() == "READ" && split.length == 2) {
+        var success = false;
         for(var i=0;i<current.items.length;i++){
             if(split[1].toUpperCase() == current.items[i].name.toUpperCase()){
                 // look at the item
+                success = true;
                 current.items[i].lookAt();
             }
         }
         for(var j=0;j<inventory.length;j++){
             if(split[1].toUpperCase() == inventory[j].name.toUpperCase()) {
+                success = true;
                 inventory[j].lookAt();
             }
         }
         for (var k=0; k<current.mods.length; k++) {
             if(split[1].toUpperCase() == current.mods[k].name.toUpperCase()) {
+                success = true;
                 current.mods[k].lookAt();
             }
         }
+        if (!success) {
+            display("I can't see that.");
+        }
     }
     else if (split[0].toUpperCase() == "READ" && split.length == 3) {
+        var success = false;
         for (var i = 0; i<current.items.length; i++) {
             if(current.items[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
                 current.items[i].lookAt();
             }
         }
         for (var i = 0; i<inventory.length; i++) {
             if(inventory[i].name.toUpperCase().includes(split[1].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
                 inventory[i].lookAt();
             }
         }
         for (var i = 0; i<current.mods.length; i++) {
             if(current.mods[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
                 current.mods[i].lookAt();
             }
+        }
+        if (!success) {
+            display("I can't see that.");
+        }
+    }
+    else if (split[0] == "EXAMINE" && split.length == 2) {
+        var success = false;
+        for(var i=0;i<current.items.length;i++){
+            if(split[1].toUpperCase() == current.items[i].name.toUpperCase()){
+                // look at the item
+                success = true;
+                current.items[i].lookAt();
+            }
+        }
+        for(var j=0;j<inventory.length;j++){
+            if(split[1].toUpperCase() == inventory[j].name.toUpperCase()) {
+                success = true;
+                inventory[j].lookAt();
+            }
+        }
+        for (var k=0; k<current.mods.length; k++) {
+            if(split[1].toUpperCase() == current.mods[k].name.toUpperCase()) {
+                success = true;
+                current.mods[k].lookAt();
+            }
+        }
+        if (!success) {
+            display("I can't see that.");
+        }
+    }
+    else if (split[0] == "EXAMINE" && split.length == 3) {
+        var success = false;
+        for (var i = 0; i<current.items.length; i++) {
+            if(current.items[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.items[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
+                current.items[i].lookAt();
+            }
+        }
+        for (var i = 0; i<inventory.length; i++) {
+            if(inventory[i].name.toUpperCase().includes(split[1].toUpperCase()) && inventory[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
+                inventory[i].lookAt();
+            }
+        }
+        for (var i = 0; i<current.mods.length; i++) {
+            if(current.mods[i].name.toUpperCase().includes(split[1].toUpperCase()) && current.mods[i].name.toUpperCase().includes(split[2].toUpperCase())) {
+                success = true;
+                current.mods[i].lookAt();
+            }
+        }
+        if (!success) {
+            display("I can't see that.");
         }
     }
     else {
@@ -217,9 +291,12 @@ function lookAt(split) {
     }
 }
 function go(direction) {
-  // *** TO DO *** : check if the door is corroded
-  // *** TO DO *** : check if the door is corroded and open
   var success=true;
+  // if(current.desc.includes("pitch")) {
+  //    display("I can't see a thing.");
+  //    success=false;
+  // }
+  // else
   if (direction.length == 2 && direction.charAt(0).toUpperCase() == 'G') {
     if (direction.toUpperCase() == "GN") {
         if (current.north===undefined) {
@@ -317,16 +394,35 @@ function go(direction) {
             display("I'm able to crawl through the hole since the ooze is cleared.");
             current=current.west;
         }
+        // special case with spacesuit
+        else if (current == Airlock) {
+            success=false;
+            display("The tether on the spacesuit holds me in place. I'd have to take the suit off to exit.");
+        }
         else {
             current=current.west;
         }
     }
     else if (direction.toUpperCase() == "GU") {
+        // if (current.up != undefined) {
+      //    current=current.up;
+      // }
+      // else {
+      //    display("There is no way up.");
+      //    success=false;
+      // }
         display("There is no way up.");
         success=false;
     }
     else if (direction.toUpperCase() == "GD") {
-      // grue reference? Carbo bay?
+        // ** TO DO ** uncomment constructor of down and up to undefined, uncomment this, and uncomment the case that the current.desc.includes("pitch")
+      // if (current.down != undefined) {
+      //    current=current.down;
+      // }
+      // else {
+      //    display("There is no way down.");
+      //    success=false;
+      // }
         display("There is no way down.");
         success=false;
     }
@@ -334,6 +430,141 @@ function go(direction) {
       // error message
       display("I'm not sure where that is.");
       success=false;
+    }
+  }
+  else if (direction.length == 1) {
+    // n, e, s, w, d, u
+    // console.log("split is length 1");
+    if (direction == "N") {
+        if (current.north===undefined) {
+            display("There's a wall there.");
+            success=false;
+        }
+        else if (!current.north.open) {
+            display("I can't open the door. There seems to be something pushing against me from the other side.");
+            success=false;
+        }
+        else if (current.north.locked) {
+            display("The door seems to be locked.");
+            success=false;
+        }
+        else if (current.north.corroded && !(current.north.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.north.corroded && current.north.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.north;
+        }
+        else {
+            current=current.north;
+        }
+    }
+    else if (direction == "E") {
+        if (current.east===undefined) {
+            display("There's a wall there.");
+            success=false;
+        }
+        else if (!current.east.open) {
+            display("I can't open the door. There seems to be something pushing against me from the other side.");
+            success=false;
+        }
+        else if (current.east.locked) {
+            display("The door seems to be locked.");
+            success=false;
+        }
+        else if (current.east.corroded && !(current.east.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.east.corroded && current.east.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.east;
+        }
+        else {
+            current=current.east;
+        }
+    }
+    else if (direction == "S") {
+        if (current.south===undefined) {
+            display("There's a wall there.");
+            success=false;
+        }
+        else if (!current.south.open) {
+            display("I can't open the door. There seems to be something pushing against me from the other side.");
+            success=false;
+        }
+        else if (current.south.locked) {
+            display("The door seems to be locked.");
+            success=false;
+        }
+        else if (current.south.corroded && !(current.south.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.south.corroded && current.south.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.south;
+        }
+        else {
+            current=current.south;
+        }
+    }
+    else if (direction == "W") {
+        if (current.west===undefined) {
+            display("There's a wall there.");
+            success=false;
+        }
+        else if (!current.west.open) {
+            display("I can't open the door. There seems to be something pushing against me from the other side.");
+            success=false;
+        }
+        else if (current.west.locked) {
+            display("The door seems to be locked.");
+            success=false;
+        }
+        else if (current.west.corroded && !(current.west.open)) {
+            display("I've corroded a hole, but there's an amoeba-like ooze pushing out of it.");
+            success=false;
+        }
+        else if (current.west.corroded && current.west.open) {
+            display("I'm able to crawl through the hole since the ooze is cleared.");
+            current=current.west;
+        }
+        // spacesuit special case
+        else if (current == Airlock) {
+            success=false;
+            display("The tether on the spacesuit holds me in place. I'd have to take the suit off to exit.");
+        }
+        else {
+            current=current.west;
+        }
+    }
+    else if (direction == "U") {
+        // if (current.up != undefined) {
+      //    current=current.up;
+      // }
+      // else {
+      //    display("There is no way up.");
+      //    success=false;
+      // }
+        display("There's no way up.");
+        success=false;
+    }
+    else if (direction == "D") {
+        // if (current.down != undefined) {
+      //    current=current.down;
+      // }
+      // else {
+      //    display("There is no way down.");
+      //    success=false;
+      // }
+        display("There's no way down.");
+        success=false;
+    }
+    else {
+        display("I'm not sure where that is.");
+        success=false;
     }
   }
   else {
@@ -474,19 +705,67 @@ function listInventory() {
     display(string);
 }
 
+var hunger = 5;
+function eat(split) {
+    if (split.includes("RATIONS") && hunger>0) {
+        inventory.splice(inventory.indexOf(rations), 1);
+        display("I guess I'm less hungry than I was before.");
+        hunger--;
+    }
+    else if (split.includes("RATIONS") && hunger<=0) {
+        display("If I eat another one of those I'll hurl.");
+    }
+    else {
+        display("I can't eat that.");
+    }
+}
+
+function drink(split) {
+    if (split.includes("BLOOD")) {
+        display("No thanks. I'm not drinking any of that.");
+    }
+    else {
+        display("I can't drink that.");
+    }
+}
+
 function textParse(split) {
-    // instead of requiring with &&, write error messages like "where do i go?" or "what should i take?"
-    // ** TODO **: hit, throw, look at <stuff that aren't items>, 
-    // consider shorthands
     if (split.length == 0) {
         display("I'm not sure what that means.");
+    }
+    else if (split.includes("THROW")) {
+        display("I don't have much of an arm. Even if I did throw, it'd probably just come back and hit me in the head.");
+    }
+    else if (split.includes("HIT") || split.includes("ATTACK") || split.includes("KILL")) {
+        display("Violence is against my religion.");
     }
     else if (split.includes("INVENTORY") || (split.length == 1 && split[0] == "I")) {
         listInventory();
     }
+    else if (split.includes("EAT")) {
+        eat(split);
+    }
+    else if (split.includes("DRINK")) {
+        drink(split);
+    }
+    else if (split[0] == "SHOUT") {
+        var random = Math.floor(Math.random() * 2);
+        if (random == 0) {
+            display("Aaaaaargh!");
+        }
+        else {
+            display("Mrglglglgl!");
+        }
+    }
   else if (split[0].toUpperCase() == "GO" && split.length == 2) {
       // maybe filter out 'to' from split and check if split[1] is an item name, so that "go to the rations" will output "I'm already in the same room as the rations."
     go(split[1]);
+  }
+  else if (split[0] == "DIAGNOSE" || split[0] == "DIAGNOSTIC") {
+      display("I'm in perfect health.");
+  }
+  else if (split.includes("FUCK") || split.includes("SHIT") || split.includes("DAMN")) {
+    display("I can't curse. This is a Christian server.");
   }
   else if (split.length == 2 && split[0].toUpperCase() == "TAKE" && split[1].toUpperCase() == "BLOOD") {
     // this really should not be hard-coded
@@ -546,9 +825,10 @@ function textParse(split) {
   else if (split[0].length == 2 && split[0].charAt(0).toUpperCase() == 'G'){
     go(split[0]);
   }
+  else if (split[0].length == 1 && (split[0] == "N" || split[0] == "E" || split[0] == "S" || split[0] == "W")) {
+    go(split[0]);
+  }
   else if (split[0].toUpperCase() == "L" || split[0].toUpperCase() == "LOOK" || split[0].toUpperCase() == "READ"){
-    // a lone read will trigger the look room : fix this
-    // 'look at slajfl;akjdflkj' just looks at the room
     lookAt(split);
   }
   else if (split[0].toUpperCase() === "TAKE" || split[0].toUpperCase() === "GET" || split[0].toUpperCase() == "GRAB" || split[0].toUpperCase() == "T" && split.length >= 2) {
@@ -648,7 +928,6 @@ function moveCleaner() {
         // case that the room it moves into was not open (blocked by mircoflora)
         if (cleaner_monster_location.corroded && !(cleaner_monster_location.open)) {
             cleaner_monster_location.open = true;
-            // TODO: do i need to do something here?
         }
     }
     else {
@@ -689,6 +968,9 @@ function handleSubmit() {
   textParse(split);
   moveCleaner();
   spotCleaner();
+  if (hasWon) {
+      win();
+  }
   // what if the user types an and?
   // maybe... and then no textParse in handleSubmit()
   // filter() {
@@ -719,8 +1001,7 @@ input.addEventListener("keyup", function(event){
     }
 });
 
-// ** TO DO ** add synonyms 
-//             examine
-// ** TO DO ** add functionality for classic zork i commands
-//             n, s, e, w, u, d, i
-//             add the joke commands like throw /thing/ at self, etc.
+// ** TO DO ** if you jump and hit your head too many times, you die humorously
+//             also if you take off your spacesuit in space, you die (obviously)
+//             also you die 50% each turn in pitch black from the grue
+//             have a checkDeath() before textParse() that throws and exception after you die so that textParse() doesnt happen
