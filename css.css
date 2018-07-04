@@ -20,12 +20,12 @@ body{
   }
   .main{
     display: inline-block;
-    width: 65%;
+    width: 80%;
     padding: 10px;
   }
   .side{
     display: inline-block;
-    width: 30%;
+    width: 15%;
     height: 95%;
     padding: 10px;
     position: absolute;
@@ -50,4 +50,7 @@ body{
     outline: none;
     font-size: 20px;
     font-family: "Courier";
+  }
+  #toggleTheme {
+    float: right;
   }

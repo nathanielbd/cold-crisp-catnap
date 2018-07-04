@@ -1,3 +1,9 @@
+window.onbeforeunload = function(event) {
+  return confirm("Do you really wanna refresh? You'd lose all your progress.");
+};
+
+console.log("Noble wizards do not mess with the console...");
+
 var pNum = 0;
 
 function display(text) {
@@ -18,18 +24,14 @@ function display2() {
 }
 
 function display3() {
-  display("All that I recall is that I just signed up as an engineer on the SEC Delano, a deep-space exploration starship.");
+  display("All that I recall is that I just signed up to work on the SEC Delano, a deep-space exploration starship.");
 }
 
 function display4() {
-  display("As refreshing as the nap was, I didn't like what I was waking up to;");
+  display("As refreshing as the nap was, I didn't like what I was waking up to; shards of glass and green specks dotted the floor. A faint siren can be heard to the aft/south side.");
 }
 
 function display5() {
-  display("shards of glass and green specks dotted the floor. A faint siren can be heard to the aft/south side.");
-}
-
-function display6() {
   display("Ugh. My boss is going to give me an earful today.");
 }
 
@@ -78,8 +80,7 @@ setTimeout(display1, 3000);
 setTimeout(display2, 6000);
 setTimeout(display3, 9000);
 setTimeout(display4, 12000);
-setTimeout(display5, 15000);
-setTimeout(display6, 18000);
-setTimeout(initLook, 19000);
-setTimeout(enable, 19000);
+setTimeout(display5, 17000);
+setTimeout(initLook, 18000);
+setTimeout(enable, 18000);
 // disable the form input for the intro
